@@ -12,9 +12,9 @@
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
     <!-- Custom CSS -->
-    <link href="{{ asset('admin_assets/plugins/chartist/dist/chartist.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/admin_assets/plugins/chartist/dist/chartist.min.css') }}" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="{{ asset('admin_assets/css/style.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/admin_assets/css/style.min.css') }}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
-    <div class="preloader">
+    <div class="preloaderd">
         <div class="lds-ripple">
             <div class="lds-pos"></div>
             <div class="lds-pos"></div>
