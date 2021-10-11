@@ -72,4 +72,26 @@ class User extends Authenticatable
         });
 
     }
+
+
+     public function user_list($name, $email, $mobile)
+    {
+        // echo $name, $email, $mobile;die;
+        return User::OrderBy('name')
+        ->where('role_id',2)
+        ->Where(function($query) use ($name) {
+            if (isset($name) && !empty($name)) {
+                $query->where('name', 'LIKE', "%".$name."%");
+                        //$query->Orwhere('last_name', 'LIKE', "%".$name."%");
+            }
+        })->Where(function($query) use ($email) {
+            if (isset($email) && !empty($email)) {
+                $query->where('email', 'LIKE', "%".$email."%");
+            }
+        })->Where(function($query) use ($mobile) {
+            if (isset($mobile) && !empty($mobile)) {
+                $query->where('mobile', 'LIKE', "%".$mobile."%");
+            }
+        })->paginate(10);
+    }
 }

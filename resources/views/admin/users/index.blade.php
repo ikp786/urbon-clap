@@ -2,8 +2,44 @@
 
 @section('content')
 
+<div class="statbox widget box box-shadow mb-1">
+    <div class="widget-header">
+        <div class="row">
+            <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                <h4>{{__('Manage Technicians')}}</h4>
+            </div>
+        </div>
+    </div>
+    <form action="{{route('users.index')}}" method="GET">
+        <div class="widget-content widget-content-area">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" maxlength="32" class="form-control mb-3 mb-md-0" name="name" placeholder="User Name" value="{{$request->name}}" onkeypress="return IsAlphaApos(event, this.value, '32')"> 
+                </div>
+                <div class="col-md-3">
+                    <input type="text" maxlength="50" class="form-control mb-3 mb-md-0" name="email" placeholder="Email Address" value="{{$request->email}}"> 
+                </div>
+                <div class="col-md-3">
+                    <input type="text" maxlength="9" class="form-control mb-3 mb-md-0" name="mobile" placeholder="Mobile Number" value="{{$request->mobile}}" onkeypress="return IsNumber(event, this.value, '9')"> 
+                </div>
+                <div class="col-md-3 d-flex">
+                    <button class="btn btn-primary mr-3" type="submit">
+                        Filter
+                    </button>
+                    <a href="{{ route('users.index') }}">
+                        <button class="btn btn-danger" type="button" id="ClearFilter">
+                            Clear Filter
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="card">
-    <div class="card-header">{{ __('Users List') }}</div>
+    <!-- <div class="card-header">{{ __('Users List') }}</div> -->
 
     <div class="card-body">
         @can('user_create')

@@ -21,12 +21,22 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->User = new User;
+    }
+
+
     public function index(Request $request)
     {
         abort_if(Gate::denies('users_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
 
-        $users = User::where('role_id',2)->with('role')->paginate(10)->appends($request->query());
-        return view('admin.users.index',compact('users'));
+        // $users = User::where('role_id',2)->with('role')->paginate(10)->appends($request->query());
+        $users     = $this->User->user_list($request->name,$request->email,$request->mobile);
+
+        // $users = User::where('role_id',2)->with('role')->paginate(10)->appends($request->query());
+        return view('admin.users.index',compact('users','request'));
 
     }
 
