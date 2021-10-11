@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
+            'mobile' => 9999292924,
             'password' => bcrypt('secret'),
             'role_id' => '1'
         ]);
@@ -24,6 +25,7 @@ class UsersTableSeeder extends Seeder
         User::create([
             'name' => 'User',
             'email' => 'user@user.com',
+            'mobile' => 9999292926,
             'password' => bcrypt('secret'),
             'role_id' => '2'
         ]);
@@ -31,6 +33,7 @@ class UsersTableSeeder extends Seeder
         User::create([
             'name' => 'Technician',
             'email' => 'technician@technician.com',
+            'mobile' => 9999292923,
             'password' => bcrypt('secret'),
             'role_id' => '2'
         ]);
