@@ -35,7 +35,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'technician@technician.com',
             'mobile' => 9999292923,
             'password' => bcrypt('secret'),
-            'role_id' => '2'
+            'role_id' => '3'
         ]);
     }
 }
