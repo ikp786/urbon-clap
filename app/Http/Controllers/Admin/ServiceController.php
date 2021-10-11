@@ -34,7 +34,7 @@ class ServiceController extends Controller
     public function create()
     {
         abort_if(Gate::denies('service_create'), Response::HTTP_FORBIDDEN, 'Forbidden');
-        $categories = Category::all()->pluck('name', 'id');
+        $categories = Category::where('status','Active')->pluck('name', 'id');
         return view('admin.services.create',compact('categories'));
     }
 

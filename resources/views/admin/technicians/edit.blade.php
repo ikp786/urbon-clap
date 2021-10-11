@@ -90,11 +90,9 @@
               <label for="name" class="required col-md-4 col-form-label text-md-right">{{ __('Category') }}</label>
               <div class="col-md-6">                     
                 {{ Form::select('category_id', $categories, $technicians->category_id, ['class' => 'form-control']) }}
-                @error('category_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                @if($errors->has('category_id'))
+                <div class="text-danger">{{ $errors->first('category_id') }}</div>
+                @endif
             </div>
         </div>
 

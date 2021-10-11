@@ -167,7 +167,7 @@ class PermissionTableSeeder extends Seeder
             ],
 
             [
-                'name' => 'technicians_edit',
+                'name' => 'technician_edit',
             ],
 
             [

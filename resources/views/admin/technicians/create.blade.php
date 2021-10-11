@@ -105,9 +105,9 @@
                 <div class="col-md-6">                     
                     {{ Form::select('category_id', $categories, '', ['class' => 'form-control']) }}
                     @error('category_id')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                    @if($errors->has('profile_pic'))
+                    <div class="text-danger">{{ $errors->first('category_id') }}</div>
+                    @endif
                     @enderror
                 </div>
             </div>

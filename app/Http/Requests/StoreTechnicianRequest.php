@@ -41,22 +41,20 @@ class StoreTechnicianRequest extends FormRequest
             'password' => 'required|min:6|max:20',
             // 'role_id' => 'required|exists:roles,id',
             'category_id' => 'required',
-            'profile_pic',
+            'profile_pic' => 'required|mimes:jpg,jpeg,png,gif,svg,webp',
         ];
     }
 
     public function messages()
     {
         return [
-
             'name.required' => 'Name is missing',
-            'name.|string|min:3|max:200' => 'Name length min 2 and max 200 required in string',
-            
+            'name.|string|min:3|max:200' => 'Name length min 2 and max 200 required in string',            
             'email.email' => 'Please enter a valid email',
             'email.max:200' => 'email max length 200',
             // 'password' => 'required|password_confirmation|min:6|max:20',
             // 'role_id' => 'required|exists:roles,id',
-            'category_id' => 'required',
+            'category_id.required' => 'Category is missing',
         ];
     }
 }

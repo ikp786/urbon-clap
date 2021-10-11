@@ -103,7 +103,7 @@ class TechnicianController extends Controller
      */
     public function edit($id)
     {
-        abort_if(Gate::denies('technicians_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        abort_if(Gate::denies('technician_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $technicians = Technician::where('id',$id)->find($id);
         $roles = Role::where('id',3)->pluck('title','id');
         $categories = Category::all()->pluck('name', 'id');        
@@ -120,7 +120,7 @@ class TechnicianController extends Controller
      */
     public function update(UpdateTechnicianRequest $request,$id)
     {
-        abort_if(Gate::denies('technicians_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        abort_if(Gate::denies('technician_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $technician = Technician::find($id);
         $input = $request->validated();
         if($request->profile_pic) {
