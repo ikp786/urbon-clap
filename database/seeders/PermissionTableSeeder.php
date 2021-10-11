@@ -44,6 +44,9 @@ class PermissionTableSeeder extends Seeder
             [
                 'name' => 'user_show',
             ],
+            [
+                'name' => 'user_restore'
+            ],
 
 
             // role permissions
@@ -151,15 +154,46 @@ class PermissionTableSeeder extends Seeder
             [
                 'name' => 'service_restore',
             ],
+            [
+                'name' => 'service_delete'
+            ],
 
 
+            // Technician permissions
+
+
+            [
+                'name' => 'technician_access',
+            ],
+
+            [
+                'name' => 'technicians_edit',
+            ],
+
+            [
+                'name' => 'technician_delete',
+            ],
+
+            [
+                'name' => 'technician_create',
+            ],
+
+            [
+                'name' => 'technician_show',
+            ],
+            [
+                'name' => 'technician_restore'
+            ],
 
 
 
         ];
 
         foreach($permissions as $permission){
+            $checkExist = Permission::where('name',$permission['name'])->get();
+            if(!isset($checkExist[0]->id)){
             Permission::create($permission);
+        }
         }
 
     }

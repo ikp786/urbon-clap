@@ -1,3 +1,4 @@
+
 @extends('layouts.admin')
 
 @section('content')
@@ -6,8 +7,8 @@
     <div class="card-header">{{ __('Category List') }}</div>
 
     <div class="card-body">
-        @can('permission_create')
-        <a href="{{ route('admin.categories.list') }}" class="btn btn-primary">Go to list</a>
+        @can('category_access')
+        <a href="{{ route('categories.index') }}" class="btn btn-primary">Go to list</a>
         @endcan
         <br /><br />
         <table class="table table-borderless table-hover">
@@ -15,23 +16,25 @@
                 <th class="text-center">ID</th>
                 <th>Name</th>
                 <th>
-                    &nbsp;
+                    Thumbnail
                 </th>
+                <th>Action</th>
             </tr>
             @forelse ($categories as $category)
             <tr>
                 <td class="text-center">{{$category->id}}</td>
                 <td>{{$category->name}}</td>
+                <td><img src="{{asset('storage/app/public/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>
-                    @can('permission_delete')
-                    <form action="{{ route('admin.categories.delete', $category->id) }}" class="d-inline-block" method="post">
+                    @can('category_delete')
+                    <form action="{{ route('categories.delete', $category->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure permission delete this category')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure category delete this category')" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                     @endcan
-                    @can('permission_delete')
-                    <a href="{{ route('admin.categories.restore',$category->id) }}" class="btn btn-sm btn-warning">restore</a>
+                    @can('category_restore')
+                    <a href="{{ route('categories.restore',$category->id) }}" class="btn btn-sm btn-warning">restore</a>
                     @endcan
                 </td>
             </tr>

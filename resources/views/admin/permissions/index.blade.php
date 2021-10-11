@@ -7,7 +7,7 @@
 
         <div class="card-body">
             @can('permission_create')
-            <a href="{{ route('admin.permissions.create') }}" class="btn btn-primary">Add New Permission</a>
+            <a href="{{ route('permissions.create') }}" class="btn btn-primary">Add New Permission</a>
             @endcan
 
             <br /><br />
@@ -28,10 +28,10 @@
                             <td>{{$permission->name}}</td>
                             <td>
                                     @can('permission_edit')
-                                        <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
                                     @can('permission_delete')
-                                <form action="{{ route('admin.permissions.destroy', $permission->id) }}" class="d-inline-block" method="post">
+                                <form action="{{ route('permissions.destroy', $permission->id) }}" class="d-inline-block" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Delete</button>

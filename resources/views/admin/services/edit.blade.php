@@ -3,10 +3,10 @@
 <div class="card">
     <div class="card-header">{{ __('Edit Service') }}</div>
     <div class="card-body">
-       @can('permission_create')
-       <a href="{{ route('admin.services.list') }}" class="btn btn-primary">Go to list</a>
+       @can('service_access')
+       <a href="{{ route('services.index') }}" class="btn btn-primary">Go to list</a>
        @endcan       
-        {!! Form::open(['method' => 'PUT','route' => ['admin.services.update', $services->id],'enctype="multipart/form-data"']) !!}
+        {!! Form::open(['method' => 'PUT','route' => ['services.update', $services->id],'enctype="multipart/form-data"']) !!}
         {{Form::token()}}
         
         <div class="form-group row">
@@ -24,7 +24,7 @@
             <label for="name" class="required col-md-4 col-form-label text-md-right">{{ __('Category') }}</label>
             <div class="col-md-6">                     
                 {{ Form::select('category_id', $categories, $services->category_id, ['class' => 'form-control']) }}
-                @error('status')
+                @error('category_id')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -59,6 +59,17 @@
                 @endif
             </div>
         </div>
+
+        <div class="form-group row">            
+        {{ Form::label('Status', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+        <div class="col-md-6">                     
+            {{-- Form::checkbox('status', ($services->status == 'Active' ) ? 'Checked' : '') --}}
+            {!! Form::checkbox('status', 'Active', ($services->status =='Active'?true:null), ['class' => 'field']) !!}
+            @if($errors->has('status'))
+            <div class="text-danger">{{ $errors->first('stauts') }}</div>
+            @endif
+        </div>
+    </div>
 
         <div class="form-group row mb-0">
             <div class="col-md-6 offset-md-4">

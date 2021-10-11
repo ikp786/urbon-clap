@@ -22,5 +22,8 @@ class RoleTableSeeder extends Seeder
         Role::create([
             'title' => 'User',
         ]);
+        Role::create([
+            'title' => 'Technician',
+        ]);
     }
 }

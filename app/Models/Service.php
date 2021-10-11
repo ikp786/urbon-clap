@@ -17,6 +17,7 @@ class Service extends Model
         'service_amount',
         'service_description',
         'service_thumbnail',
+        'status',
     ];
 
     public function categories(){
@@ -25,7 +26,7 @@ class Service extends Model
 
   public function getServiceThumbnailAttribute($value)
   {    
-    return !empty($value) ? asset('storage/app/public/service/'.$value) : asset('storage/app/public/service-default/default.jpg');
+    return $value;//!empty($value) ? asset('storage/app/public/service/'.$value) : asset('storage/app/public/service-default/default.jpg');
     
 }
 }

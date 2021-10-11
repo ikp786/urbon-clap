@@ -7,7 +7,7 @@
 
         <div class="card-body">
             @can('role_create')
-            <a href="{{ route('admin.roles.create') }}" class="btn btn-primary">Add New Role</a>
+            <a href="{{ route('roles.create') }}" class="btn btn-primary">Add New Role</a>
             @endcan
 
             <br /><br />
@@ -30,13 +30,13 @@
                             <td>{{$role->short_code ?? '--'}}</td>
                             <td>
                                     @can('role_show')
-                                        <a href="{{ route('admin.roles.show', $role->id) }}" class="btn btn-sm btn-success">View</a>
+                                        <a href="{{ route('roles.show', $role->id) }}" class="btn btn-sm btn-success">View</a>
                                     @endcan
                                     @can('role_edit')
-                                        <a href="{{ route('admin.roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
                                     @can('role_delete')
-                                        <form action="{{ route('admin.roles.destroy', $role->id) }}" class="d-inline-block" method="post">
+                                        <form action="{{ route('roles.destroy', $role->id) }}" class="d-inline-block" method="post">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Delete</button>

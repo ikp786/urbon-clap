@@ -26,6 +26,17 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required',            
+            'thumbnail' => 'required',
+        ];
+    }
+    public function messages(){
+
+        return [
+            'name.required' => 'Name filed is missing',
+            // 'thumbnail.required' => 'Catrgory Thumbnail is missing',
+            'thumbnail.required'    => 'Catrgory Thumbnail should be required',
+            'mimes.required'                => 'Image format jpg,jpeg,png,gif,svg,webp',
+
         ];
     }
 }

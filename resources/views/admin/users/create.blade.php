@@ -6,9 +6,12 @@
         <div class="card-header">{{ __('Add New User') }}</div>
 
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.users.store') }}">
+            @can('users_access')
+            <a href="{{ route('users.index') }}" class="btn btn-primary">Back to List</a>
+            @endcan
+            <form method="POST" enctype="multipart/form-data" action="{{ route('users.store') }}">
                 @csrf
-
+                {{--
                 <div class="form-group row">
                     <label for="role_id" class="required col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
 
@@ -28,12 +31,12 @@
                         @enderror
                     </div>
                 </div>
-
+                --}}
                 <div class="form-group row">
                     <label for="name" class="required col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                     <div class="col-md-6">
-                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" >
+                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}"  autocomplete="name" >
 
                         @error('name')
                             <span class="invalid-feedback" role="alert">
@@ -47,7 +50,7 @@
                     <label for="email" class="required col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                     <div class="col-md-6">
-                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}"  autocomplete="email">
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -58,10 +61,23 @@
                 </div>
 
                 <div class="form-group row">
+                <label for="mobile" class="required col-md-4 col-form-label text-md-right">{{ __('Mobile') }}</label>
+
+                <div class="col-md-6">
+                    <input id="mobile" type="number" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}"  autocomplete="mobile">
+                    @error('mobile')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+
+                <div class="form-group row">
                     <label for="password" class="required col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                     <div class="col-md-6">
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  autocomplete="new-password">
 
                         @error('password')
                             <span class="invalid-feedback" role="alert">
@@ -75,10 +91,35 @@
                     <label for="password-confirm" class="required col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
                     <div class="col-md-6">
-                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation"  autocomplete="new-password">
+                         @error('password_confirmation')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
                 </div>
 
+                <div class="form-group row">            
+                {{ Form::label('Profile Photo', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+                <div class="col-md-6">                     
+                    {{ Form::file('profile_pic',['class' => 'form-control']) }}               
+                    @if($errors->has('profile_pic'))
+                    <div class="text-danger">{{ $errors->first('profile_pic') }}</div>
+                    @endif
+                </div>
+            </div>
+
+
+            <div class="form-group row">            
+                {{ Form::label('Status', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+                <div class="col-md-6">                     
+                    {{ Form::checkbox('status', 'Active', ['class' => 'col-md-4 col-form-label text-md-right']) }}               
+                    @if($errors->has('status'))
+                    <div class="text-danger">{{ $errors->first('stauts') }}</div>
+                    @endif
+                </div>
+            </div>
 
 
                 <div class="form-group row mb-0">

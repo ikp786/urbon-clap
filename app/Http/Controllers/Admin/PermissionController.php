@@ -47,7 +47,7 @@ class PermissionController extends Controller
     {
         Permission::create($request->validated());
 
-        return redirect()->route('admin.permissions.index')->with('status-success','New Permission Created');
+        return redirect()->route('permissions.index')->with('status-success','New Permission Created');
     }
 
 
@@ -75,7 +75,7 @@ class PermissionController extends Controller
     {
         $permission->update($request->validated());
 
-        return redirect()->route('admin.permissions.index')->with('status-success','Permission Updated');
+        return redirect()->route('permissions.index')->with('status-success','Permission Updated');
     }
 
     /**

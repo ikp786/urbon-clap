@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Service;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use Illuminate\Support\Facades\Gate;
@@ -17,7 +18,7 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list()
+    public function index()
     {        
         abort_if(Gate::denies('category_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
 
@@ -46,9 +47,21 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         abort_if(Gate::denies('category_store'), Response::HTTP_FORBIDDEN, 'Forbidden');
-        $category = Category::create($request->validated());
-        return redirect()->route('admin.categories.list')->with('status-success','New Category Created');
+        $input = $request->validated();
+        if($request->thumbnail) {
+         $fileName = time().'_'.str_replace(" ","_",$request->thumbnail->getClientOriginalName());
+         $filePath = $request->file('thumbnail')->storeAs('category', $fileName, 'public');
+         $input['thumbnail'] = $fileName;
+     }
+       if (isset($request->status) && $request->status == 'Active') {
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
     }
+
+     $category = Category::create($input);
+     return redirect()->route('categories.index')->with('status-success','New Category Created');
+ }
 
     /**
      * Display the specified resource.
@@ -71,8 +84,9 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
+
         abort_if(Gate::denies('category_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
-        $categories = Category::all();
+        $categories = Category::find($id);
 
         return view('admin.categories.edit', compact('categories'));
     }
@@ -87,11 +101,27 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request,$id)
     {   
         abort_if(Gate::denies('category_update'), Response::HTTP_FORBIDDEN, 'Forbidden');
-        $categories = Category::all();
-        $category = Category::find($id);
-        $category->update($request->validated());
-        return redirect()->route('admin.categories.list')->with('status-success','Category Updated');
+        // $categories = Category::all();
+        // $category = Category::find($id);
+        // $category->update($request->validated());
+
+        $input = $request->all();        
+        $category = Category::find($id);        
+        if($request->thumbnail) {
+         $fileName = time().'_'.str_replace(" ","_",$request->thumbnail->getClientOriginalName());
+         $filePath = $request->file('thumbnail')->storeAs('category', $fileName, 'public');
+         $input['thumbnail'] = $fileName;           
+     }else{
+        unset($input['thumbnail']);
+    }   
+    if (isset($request->status) && $request->status == 'Active') {
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
     }
+    $category->update($input);
+    return redirect()->route('categories.index')->with('status-success','Category Updated');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -108,6 +138,7 @@ class CategoryController extends Controller
     }
 
     public function trash(){        
+
         abort_if(Gate::denies('category_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $categories = Category::onlyTrashed()->paginate();
         return view('admin.categories.trash',compact('categories'));
@@ -124,8 +155,22 @@ class CategoryController extends Controller
     public function delete($id)
     {
         abort_if(Gate::denies('category_delete'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $service = Service::where('id',$id)->get();
+        $service_id = isset($service[0]->id) ? 1 : 0;
+        if ($service_id == 1) {
+            return redirect()->back()->with(['status-danger' => "this category cannot be deleted. Because this category foreign key save in Services master"]);
+        }
         $category = Category::onlyTrashed()->find($id);
         $category->forceDelete();
         return redirect()->back()->with(['status-success' => "Category Permanet Deleted"]);
+    }
+
+    public function chageStatus(Request $request) { 
+        if(request()->ajax()){
+            $category = Category::find($request->id);
+            $category->status = $request->status; 
+            $category->save(); 
+            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
+        }
     }
 }

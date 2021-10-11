@@ -7,7 +7,7 @@
 
         <div class="card-body">
 
-            <a href="{{ route('admin.roles.index') }}" class="btn btn-light">Back to List</a>
+            <a href="{{ route('roles.index') }}" class="btn btn-light">Back to List</a>
 
             <br /><br />
 

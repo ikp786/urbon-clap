@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         abort_if(Gate::denies('users_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
 
-        $users = User::with('role')->paginate(5)->appends($request->query());
+        $users = User::where('role_id',2)->with('role')->paginate(10)->appends($request->query());
         return view('admin.users.index',compact('users'));
 
     }
@@ -51,9 +51,23 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        User::create($request->validated());
-        return redirect()->route('admin.users.index')->with(['status-success' => "New User Created"]);
-    }
+        abort_if(Gate::denies('user_create'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $input = $request->validated();
+        if($request->profile_pic) {
+         $fileName = time().'_'.str_replace(" ","_",$request->profile_pic->getClientOriginalName());
+         $filePath = $request->file('profile_pic')->storeAs('user_image', $fileName, 'public');
+         $input['profile_pic'] = $fileName;
+     }
+     if (isset($request->status) && $request->status == 'Active'){
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
+    }   
+    $input['role_id'] = 2;   
+
+    User::create($input);
+    return redirect()->route('users.index')->with(['status-success' => "New User Created"]);
+}
 
 
     /**
@@ -93,8 +107,20 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update(array_filter($request->validated()));
-        return redirect()->route('admin.users.index')->with(['status-success' => "User Updated"]);
+        abort_if(Gate::denies('user_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $input = $request->all();
+        if($request->profile_pic) {
+           $fileName = time().'_'.str_replace(" ","_",$request->profile_pic->getClientOriginalName());
+           $filePath = $request->file('profile_pic')->storeAs('user_image', $fileName, 'public');
+           $input['profile_pic'] = $fileName;
+       }
+       if (isset($request->status) && $request->status == 'Active') {
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
+    }   
+        $user->update(array_filter($input));
+        return redirect()->route('users.index')->with(['status-success' => "User Updated"]);
     }
 
 
@@ -110,5 +136,38 @@ class UserController extends Controller
 
         $user->delete();
         return redirect()->back()->with(['status-success' => "User Deleted"]);
+    }
+
+    public function trash(){        
+
+        abort_if(Gate::denies('users_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $users = User::where('role_id',2)->onlyTrashed()->paginate();
+        return view('admin.users.trash',compact('users'));
+    }
+
+    public function restore($id)
+    {
+        abort_if(Gate::denies('user_restore'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $category = User::onlyTrashed()->find($id);
+        $category->restore();
+        return redirect()->back()->with(['status-success' => "User restored."]);
+    }
+
+    public function delete($id)
+    {
+        abort_if(Gate::denies('user_delete'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        
+        $User = User::onlyTrashed()->find($id);
+        $User->forceDelete();
+        return redirect()->back()->with(['status-success' => "User Permanet Deleted"]);
+    }
+
+    public function chageStatus(Request $request) { 
+        if(request()->ajax()){
+            $User = User::find($request->id);
+            $User->status = $request->status; 
+            $User->save(); 
+            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
+        }
     }
 }

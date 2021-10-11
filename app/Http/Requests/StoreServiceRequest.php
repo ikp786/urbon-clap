@@ -32,4 +32,14 @@ class StoreServiceRequest extends FormRequest
             'service_thumbnail' => 'required|mimes:jpg,jpeg,png,gif,svg,webp',
         ];
     }
+
+    public function messages(){
+
+        return [
+            'name.required' => 'Name filed is missing',
+            'category_id.required'   => 'Category Id filed is missing',
+            'service_amount.required' => 'Service Amount filed is missing',
+            'service_description.required' => 'Service Description filed is missing'
+        ];
+    }
 }

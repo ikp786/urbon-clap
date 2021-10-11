@@ -6,8 +6,8 @@
     <div class="card-header">{{ __('Service List') }}</div>
 
     <div class="card-body">
-        @can('permission_create')
-        <a href="{{ route('admin.services.list') }}" class="btn btn-primary">Go to list</a>
+        @can('service_access')
+        <a href="{{ route('services.index') }}" class="btn btn-primary">Go to list</a>
         @endcan
         <br /><br />
         <table class="table table-borderless table-hover">
@@ -27,25 +27,25 @@
                 <td>{{isset($service->categories->name) ? $service->categories->name : ''}}</td>
                 <td>{{$service->service_amount}}</td>
                 <td>{{$service->service_description}}</td>
-                <td><img src="{{$service->service_thumbnail}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/app/public/service/'.$service->service_thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>
-                    @can('permission_delete')
-                    <form action="{{ route('admin.services.delete', $service->id) }}" class="d-inline-block" method="post">
+                    @can('service_restore')
+                    <form action="{{ route('services.delete', $service->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure permission delete this Service')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this Service')" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                     @endcan
 
                     @can('permission_delete')
-                    <a href="{{ route('admin.services.restore',$service->id) }}" class="btn btn-sm btn-warning">restore</a>
+                    <a href="{{ route('services.restore',$service->id) }}" class="btn btn-sm btn-warning">restore</a>
                     @endcan
 
                 </td>
             </tr>
             @empty
             <tr>
-                <td colspan="100%" class="text-center text-muted py-3">No Permissions Found</td>
+                <td colspan="100%" class="text-center text-muted py-3">No Service Found</td>
             </tr>
             @endforelse
         </table>

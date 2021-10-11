@@ -10,10 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable
+class Technician extends Authenticatable
 {
-    use HasFactory, Notifiable;
-    use SoftDeletes;
+   use HasFactory, Notifiable;
+   use SoftDeletes;
+
+
+    /**
+     * The attributes that are table name.
+     *
+     * @var array
+     */
+
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,11 +32,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'mobile',
         'password',
         'role_id',
-        'mobile',
         'profile_pic',
-        'status'
+        'status',
+        'category_id',
+        'online_status',
     ];
 
     /**
@@ -72,4 +84,28 @@ class User extends Authenticatable
         });
 
     }
+
+
+
+    public function user_list($name, $email, $mobile)
+    {
+        // echo $name, $email, $mobile;die;
+        return User::OrderBy('name')
+        ->where('role_id',3)
+        ->Where(function($query) use ($name) {
+            if (isset($name) && !empty($name)) {
+                $query->where('name', 'LIKE', "%".$name."%");
+                        //$query->Orwhere('last_name', 'LIKE', "%".$name."%");
+            }
+        })->Where(function($query) use ($email) {
+            if (isset($email) && !empty($email)) {
+                $query->where('email', 'LIKE', "%".$email."%");
+            }
+        })->Where(function($query) use ($mobile) {
+            if (isset($mobile) && !empty($mobile)) {
+                $query->where('mobile', 'LIKE', "%".$mobile."%");
+            }
+        })->paginate(10);
+    }
+
 }

@@ -6,7 +6,7 @@
         <div class="card-header">{{ __('Edit Permission') }}</div>
 
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.permissions.update', $permission->id) }}">
+            <form method="POST" action="{{ route('permissions.update', $permission->id) }}">
                 @csrf
                 @method('PUT')
 

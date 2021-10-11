@@ -7,13 +7,18 @@
 
         <div class="card-body">
 
-            <a href="{{ route('admin.users.index') }}" class="btn btn-light">Back to List</a>
+            <a href="{{ route('users.index') }}" class="btn btn-light">Back to List</a>
 
             <br /><br />
 
 
 
                 <table class="table table-borderless">
+
+                    <tr>
+                        <th>Photo</th>
+                        <td><img src="{{asset('storage/app/public/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;"></td>
+                    </tr>
 
                     <tr>
                         <th>ID</th>
@@ -27,6 +32,16 @@
                         <th>Email</th>
                         <td>{{ $user->email }}</td>
                     </tr>
+
+                    <tr>
+                        <th>Mobile</th>
+                        <td>{{ $user->mobile }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>{{ $user->status }}</td>
+                    </tr>
+
                     <tr>
                         <th>Role</th>
                         <td>{{ $user->role->title ?? '--' }}</td>

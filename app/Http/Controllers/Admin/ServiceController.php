@@ -19,7 +19,7 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list()
+    public function index()
     {
         abort_if(Gate::denies('service_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $services = Service::with('categories')->paginate(10);
@@ -46,17 +46,21 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request)
     {
-        abort_if(Gate::denies('service_store'), Response::HTTP_FORBIDDEN, 'Forbidden');
-
+        abort_if(Gate::denies('service_store'), Response::HTTP_FORBIDDEN, 'Forbidden');    
         $input = $request->validated();
         if($request->service_thumbnail) {
            $fileName = time().'_'.str_replace(" ","_",$request->service_thumbnail->getClientOriginalName());
            $filePath = $request->file('service_thumbnail')->storeAs('service', $fileName, 'public');
            $input['service_thumbnail'] = $fileName;
        }
-       $service = Service::create($input);
-       return redirect()->route('admin.services.list')->with('status-success','New Service Created');
-   }
+       if (isset($request->status) && $request->status == 'Active') {
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
+    }
+    $service = Service::create($input);
+    return redirect()->route('services.index')->with('status-success','New Service Created');
+}
 
     /**
      * Display the specified resource.
@@ -68,7 +72,7 @@ class ServiceController extends Controller
     {
         abort_if(Gate::denies('service_show'), Response::HTTP_FORBIDDEN, 'Forbidden');
 
-        return view('admin.services.show',compact('services'));
+        return view('admin.services.show');
     }
 
     /**
@@ -104,8 +108,14 @@ class ServiceController extends Controller
        }else{
         unset($input['service_thumbnail']);
     }   
+    if (isset($request->status) && $request->status == 'Active') {
+        $input['status'] = 'Active';
+    }else{
+        $input['status'] = 'Inactive';
+    }
+    
     $service->update($input);
-    return redirect()->route('admin.services.list')->with('status-success','Service Updated');
+    return redirect()->route('services.index')->with('status-success','Service Updated');
 }
 
     /**
@@ -131,16 +141,26 @@ class ServiceController extends Controller
     public function restore($id)
     {
         abort_if(Gate::denies('service_restore'), Response::HTTP_FORBIDDEN, 'Forbidden');        
-       $category = Service::onlyTrashed()->find($id);
-       $category->restore();
-       return redirect()->back()->with(['status-success' => "Service restored."]);
-   }
+        $category = Service::onlyTrashed()->find($id);
+        $category->restore();
+        return redirect()->back()->with(['status-success' => "Service restored."]);
+    }
 
-   public function delete($id)
-   {    
-    abort_if(Gate::denies('service_delete'), Response::HTTP_FORBIDDEN, 'Forbidden');        
-     $service = Service::onlyTrashed()->find($id);   
-     $service->forceDelete();
-     return redirect()->back()->with(['status-success' => "Service Permanet Deleted"]);
- }
+    public function delete($id)
+    {    
+    // echo 'd';die;
+        abort_if(Gate::denies('service_delete'), Response::HTTP_FORBIDDEN, 'Forbidden');        
+        $service = Service::onlyTrashed()->find($id);   
+        $service->forceDelete();
+        return redirect()->back()->with(['status-success' => "Service Permanet Deleted"]);
+    }
+
+    public function chageStatus(Request $request) { 
+        if(request()->ajax()){
+            $service = Service::find($request->id);
+            $service->status = $request->status; 
+            $service->save(); 
+            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
+        }
+    }
 }

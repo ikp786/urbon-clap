@@ -6,9 +6,13 @@
         <div class="card-header">{{ __('Edit User') }}</div>
 
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+            @can('users_access')
+            <a href="{{ route('users.index') }}" class="btn btn-primary">Back to List</a>
+            @endcan
+            <form method="POST" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                {{--
                 <div class="form-group row">
                     <label for="role_id" class="required col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
 
@@ -28,6 +32,11 @@
                         @enderror
                     </div>
                 </div>
+                --}}
+
+                 @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
 
                 <div class="form-group row">
                     <label for="name" class="required col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
@@ -58,6 +67,19 @@
                 </div>
 
                 <div class="form-group row">
+                <label for="mobile" class="required col-md-4 col-form-label text-md-right">{{ __('Mobile') }}</label>
+
+                <div class="col-md-6">
+                    <input id="mobile" type="number" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile', $user->mobile) }}"  autocomplete="mobile">
+                    @error('mobile')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+
+                <div class="form-group row">
                     <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                     <div class="col-md-6">
@@ -70,6 +92,39 @@
                         @enderror
                     </div>
                 </div>
+
+
+
+
+
+        <div class="form-group row">            
+            {{ Form::label('Profile Photo', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+            <div class="col-md-6">                     
+                {{ Form::file('profile_pic',['class' => 'form-control']) }}               
+                @if($errors->has('profile_pic'))
+                <div class="text-danger">{{ $errors->first('profile_pic') }}</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="form-group row">            
+            {{ Form::label('Profile Photo', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+            <div class="col-md-6">                     
+                <img src="{{asset('storage/app/public/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;">
+            </div>
+        </div>
+
+        <div class="form-group row">            
+            {{ Form::label('Status', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
+            <div class="col-md-6">                     
+                {{-- Form::checkbox('status', ($user->status == 'Active' ) ? 'Checked' : '') --}}
+                {!! Form::checkbox('status', 'Active', ($user->status =='Active'?true:null), ['class' => 'field']) !!}
+                @if($errors->has('status'))
+                <div class="text-danger">{{ $errors->first('stauts') }}</div>
+                @endif
+            </div>
+        </div>
+
 
 
 

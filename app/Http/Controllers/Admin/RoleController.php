@@ -51,7 +51,7 @@ class RoleController extends Controller
         $role = Role::create($request->validated());
         $role->permissions()->sync($request->permissions);
 
-        return redirect()->route('admin.roles.index')->with('status-success','New Role Created');
+        return redirect()->route('roles.index')->with('status-success','New Role Created');
     }
 
 
@@ -95,7 +95,7 @@ class RoleController extends Controller
         $role->update($request->validated());
         $role->permissions()->sync($request->permissions);
 
-        return redirect()->route('admin.roles.index')->with('status-success','Role Updated');
+        return redirect()->route('roles.index')->with('status-success','Role Updated');
     }
 
     /**

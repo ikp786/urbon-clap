@@ -15,6 +15,8 @@
     <link href="{{ asset('public/admin_assets/css/style.min.css') }}" rel="stylesheet">
     <!-- slim select -->
     <link rel="stylesheet" href="{{ asset('public/admin_assets/plugins/slim-select/slimselect.min.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,7 +56,7 @@
                     <!-- ============================================================== -->
                     <!-- Logo -->
                     <!-- ============================================================== -->
-                    <a class="navbar-brand justify-content-center" href="{{ route('admin.home') }}">
+                    <a class="navbar-brand justify-content-center" href="{{ route('home') }}">
                         <!-- Logo icon -->
                         <b class="logo-icon">
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
