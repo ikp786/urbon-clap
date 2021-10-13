@@ -24,7 +24,6 @@ class OrderController extends Controller
 
     function index(Request $request){
 
-
         $order = Order::with('users','categories','services','technicians');        
         if (isset($request->mobile) && !empty($request->mobile)) {
             $order->where('mobile', 'LIKE', "%".$request->mobile."%");
@@ -43,36 +42,74 @@ class OrderController extends Controller
         }        
         if (isset($request->technician_id) && !empty($request->technician_id)) {
             $order->where('technician_id', 'LIKE', "%".$request->technician_id."%");
-        }        
+        }
+        if (isset($request->time_slot_id) && !empty($request->time_slot_id)) {
+            $order->where('time_slot_id', 'LIKE', "%".$request->time_slot_id."%");
+        }
+        if (isset($request->start_date) && !empty($request->start_date)) {
+            $order->where('booking_date', '>=', $request->start_date);
+        }
+        if (isset($request->end_date) && !empty($request->end_date)) {
+            $order->where('booking_date', '<=', $request->end_date);
+        }
 
         $orders = $order->orderBy('id')->paginate(10);
         $categories = Category::where('status','Active')->pluck('name', 'id');
         $services = Service::where('status','Active')->pluck('name', 'id');
         $technicians = Technician::where('status','Active')->where('role_id',3)->pluck('name', 'id');
-        $data = compact('orders','request','categories','services','technicians');
+        $timeslots = TimeSlot::pluck('slot', 'id');
+        $data = compact('orders','request','categories','services','technicians','timeslots');
         return view('admin.orders.index',$data);
     }
 
-    public function chageStatus(Request $request) { 
-        // echo $request->status;die;
-        if(request()->ajax()){
-            $order = Order::find($request->id);
-            // print_r($order);die;
-            $order->status = $request->status; 
-            $order->save(); 
-            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
-        }
+    function detail($order_id){
+
+        $orders = Order::with('users','categories','services','technicians')->where('order_id',$order_id)->get();
+        if (!isset($orders[0]->id)) {
+         return redirect()->back()->with(['status-danger' => "Sorry! wrong method."]);
+     }  
+     $order = $orders[0];
+
+     return view('admin.orders.show',compact('order'));
+ }
+
+ public function chageStatus(Request $request) {         
+    if(request()->ajax()){
+        $order = Order::find($request->id);            
+        $order->status = $request->status; 
+        $order->save(); 
+        return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
     }
+}
 
 
-    public function adminPaymentReceivedStatus(Request $request) { 
-        if(request()->ajax()){
-            $order = Order::find($request->id);
-            
-            $order->admin_payment_status = $request->status; 
-            $order->save(); 
-            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
-        }
+public function adminPaymentReceivedStatus(Request $request) { 
+    if(request()->ajax()){
+        $order = Order::find($request->id);
+        $order->admin_payment_status = $request->status; 
+        $order->save(); 
+        return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
     }
+}
+
+public function fetchTechniciansByCategory(Request $request)
+{
+    // echo $request->category_id.'qqq';die;
+    $data['technicians'] = Technician::where("category_id",$request->category_id)->get(["name", "id"]);
+    return response()->json($data);
+}
+
+public function assignOrder(Request $request)
+{
+    $order = Order::find($request->id);
+    $order->technician_id    =  $request->technician_id;
+    $order->status           =  $request->status;
+    $order->status_change_by =  Auth::user()->id;
+    $order->save();
+
+    return redirect()->back()->with(['status-success' => "Your Lead Assigned to Technician successfully."]);
+
+}
+
 
 }

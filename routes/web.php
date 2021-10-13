@@ -84,8 +84,11 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
 
     Route::group(['prefix' => 'orders'],function(){
         Route::get('index',[OrderController::class,'index'])->name('orders.index');
+        Route::post('assign-order',[OrderController::class,'assignOrder'])->name('orders.assign-order');
         Route::post('change-status',[OrderController::class,'chageStatus'])->name('order.change-status');
+        Route::post('fetch-technicians-by-category',[OrderController::class,'fetchTechniciansByCategory'])->name('order.fetch-technicians-by-category');
         Route::post('admin-payment-received-status',[OrderController::class,'adminPaymentReceivedStatus'])->name('order.admin-payment-received-status');
+        Route::get('detail/{id}',[OrderController::class,'detail'])->name('admin.orders.detail');
     });
     
 });

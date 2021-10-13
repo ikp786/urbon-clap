@@ -41,9 +41,9 @@ class Order extends Model
 
    public function services(){
       return $this->hasOne(Service::class,'id','service_id');
-  }
+  }   
 
-   public function technicians(){
-      return $this->hasMany(Technician::class,'category_id','category_id');
+  public function technicians(){
+      return $this->hasOne(Technician::class,'id','technician_id');
   }
 }
