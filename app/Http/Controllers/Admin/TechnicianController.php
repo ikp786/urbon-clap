@@ -63,7 +63,7 @@ class TechnicianController extends Controller
      */
     public function store(StoreTechnicianRequest $request)
     {   
-        abort_if(Gate::denies('technician_create'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        abort_if(Gate::denies('technician_store'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $input = $request->validated();
         if($request->profile_pic) {
            $fileName = time().'_'.str_replace(" ","_",$request->profile_pic->getClientOriginalName());
@@ -120,7 +120,7 @@ class TechnicianController extends Controller
      */
     public function update(UpdateTechnicianRequest $request,$id)
     {
-        abort_if(Gate::denies('technician_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        abort_if(Gate::denies('technician_update'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $technician = Technician::find($id);
         $input = $request->validated();
         if($request->profile_pic) {

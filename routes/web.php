@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TechnicianController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\TimeSlotController;
+use App\Http\Controllers\Admin\OrderController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,10 +32,9 @@ Auth::routes();
 
 // Route::group(['prefix'=>"admin",'as' => 'admin.','namespace' => 'App\Http\Controllers\Admin','middleware' => ['auth','AdminPanelAccess']], function () {
 Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], function () {
-
     // Route Dashboard
     Route::get('/', [HomeController::class,'index'])->name('home');
-
+    // Route Users
     Route::resource('users', UserController::class);
     Route::post('user/change-status',[TechnicianController::class,'chageStatus'])->name('users.change-status');
     Route::group(['prefix'=>"user"], function () {
@@ -51,48 +52,40 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
         Route::delete('delete{id}', [TechnicianController::class,'delete'])->name('technicians.delete');
     });
 
-    // Route::resource('/users', UserController::class);
+    // Route Roles
     Route::resource('/roles', RoleController::class);
+    // Route Permission
     Route::resource('/permissions', PermissionController::class)->except(['show']);
-    // Route::resource('/products', 'ProductController');
 
     // Route Category
-
-    // Route::group(['prefix'=>"categories"], function () {
     Route::resource('categories', CategoryController::class);
-    // Route::post('store', [CategoryController::class,'store'])->name('categories.store');
-    // Route::put('update/{id}', [CategoryController::class,'update'])->name('categories.update');
-    // Route::get('edit/{id}', [CategoryController::class,'edit'])->name('categories.edit');
-    // Route::get('categories/list', [CategoryController::class,'list'])->name('categories.list');
-    // Route::delete('destroy{id}', [CategoryController::class,'destroy'])->name('categories.destroy');
     Route::post('category/change-status',[CategoryController::class,'chageStatus'])->name('category.change-status');
     Route::group(['prefix'=>"category"], function () {
         Route::get('trash', [CategoryController::class,'trash'])->name('categories.trash');
         Route::get('restore/{id}', [CategoryController::class,'restore'])->name('categories.restore');
         Route::delete('delete{id}', [CategoryController::class,'delete'])->name('categories.delete');
-    });
-
-    // Route Category
-// Route Service
-    // Route::group(['prefix'=>"services"], function () {
-
+    });    
+// Route Service   
     Route::resource('services', ServiceController::class);
-        // Route::get('create', [ServiceController::class,'create'])->name('services.create');
-        // Route::post('store', [ServiceController::class,'store'])->name('services.store');
-
-        // Route::put('update/{id}', [ServiceController::class,'update'])->name('services.update');
-        // Route::get('edit/{id}', [ServiceController::class,'edit'])->name('services.edit');
-        // Route::get('list', [ServiceController::class,'list'])->name('services.list');
-        // Route::delete('destroy{id}', [ServiceController::class,'destroy'])->name('services.destroy');
     Route::post('services/change-status',[ServiceController::class,'chageStatus'])->name('services.change-status');
     Route::group(['prefix'=>"service"], function () {
-
         Route::get('trash', [ServiceController::class,'trash'])->name('services.trash');
         Route::get('restore/{id}', [ServiceController::class,'restore'])->name('services.restore');
         Route::delete('delete{id}', [ServiceController::class,'delete'])->name('services.delete');
     });
+    // Route Time Slot
+    Route::resource('timeslots', TimeSlotController::class);
+    Route::post('timeslot/change-status',[TimeSlotController::class,'chageStatus'])->name('timeslots.change-status');
+    Route::group(['prefix'=>"timeslot"], function () {
+        Route::get('trash', [TimeSlotController::class,'trash'])->name('timeslots.trash');
+        Route::get('restore/{id}', [TimeSlotController::class,'restore'])->name('timeslots.restore');
+        Route::delete('delete{id}', [TimeSlotController::class,'delete'])->name('timeslots.delete');
+    });
 
+    Route::group(['prefix' => 'orders'],function(){
+        Route::get('index',[OrderController::class,'index'])->name('orders.index');
+        Route::post('change-status',[OrderController::class,'chageStatus'])->name('order.change-status');
+        Route::post('admin-payment-received-status',[OrderController::class,'adminPaymentReceivedStatus'])->name('order.admin-payment-received-status');
+    });
+    
 });
-
-
-

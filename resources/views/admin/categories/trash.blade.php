@@ -18,6 +18,7 @@
                 <th>
                     Thumbnail
                 </th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
             @forelse ($categories as $category)
@@ -25,6 +26,15 @@
                 <td class="text-center">{{$category->id}}</td>
                 <td>{{$category->name}}</td>
                 <td><img src="{{asset('storage/app/public/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td>@if($category->status == 'Active')
+                    <span style="color:green;">
+                        <b>{{$category->status}}</b>
+                    </span>
+                    @else
+                    <span style="color:red;">
+                        {{$category->status}}
+                    </span>
+                @endif</td>                
                 <td>
                     @can('category_delete')
                     <form action="{{ route('categories.delete', $category->id) }}" class="d-inline-block" method="post">

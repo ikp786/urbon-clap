@@ -177,12 +177,51 @@ class PermissionTableSeeder extends Seeder
             [
                 'name' => 'technician_create',
             ],
+            [
+                'name' => 'technician_store',
+            ],
+            [
+                'name' => 'technician_update',
+            ],
 
             [
                 'name' => 'technician_show',
             ],
             [
                 'name' => 'technician_restore'
+            ],
+
+
+              // Time Slot permissions
+
+
+            [
+                'name' => 'timeslot_access',
+            ],
+
+            [
+                'name' => 'timeslot_create',
+            ],
+
+            [
+                'name' => 'timeslot_store',
+            ],
+
+            [
+                'name' => 'timeslot_edit',
+            ],
+
+            [
+                'name' => 'timeslot_update',
+            ],
+            [
+                'name' => 'timeslot_destroy'
+            ],
+            [
+                'name' => 'timeslot_restore',
+            ],
+            [
+                'name' => 'timeslot_delete',
             ],
 
 
