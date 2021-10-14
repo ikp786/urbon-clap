@@ -18,11 +18,11 @@ class ServiceResource extends JsonResource
      return [
         'service_id'               => $this->id,        
         'service_name'             => $this->name,
-        'service_amount'         => $this->service_amount,            
-        'service_description'         => $this->service_description,
-        'service_thumbnail'            => !empty($this->service_thumbnail) ? asset('storage/app/public/service/'.$this->service_thumbnail) : asset('storage/app/public/user_image/user-default-pic.png'),  
-        // new UserResource($this->user)                     
-        'category_data'=> new CategoryResource($this->categories)
+        'service_amount'           => $this->service_amount,            
+        'service_description'      => $this->service_description,
+        'service_thumbnail'        => !empty($this->service_thumbnail) ? asset('storage/app/public/service/'.$this->service_thumbnail) : asset('storage/app/public/user_image/user-default-pic.png'),          
+        'category_name'             =>  $this->categories->name,
+        // 'category_data'=> new CategoryResource($this->categories)
     ];
 }
 }

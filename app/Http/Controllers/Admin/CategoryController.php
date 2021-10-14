@@ -132,6 +132,11 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         abort_if(Gate::denies('category_destroy'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $service = Service::withTrashed()->where('category_id',$id)->get();
+        $service_id = isset($service[0]->id) ? 1 : 0;
+        if ($service_id == 1) {
+            return redirect()->back()->with(['status-danger' => "this category cannot be deleted. Because this category foreign key save in Services master"]);
+        }
         $category = Category::find($id);
         $category->delete();
         return redirect()->back()->with(['status-success' => "Category Deleted"]);
@@ -155,7 +160,7 @@ class CategoryController extends Controller
     public function delete($id)
     {
         abort_if(Gate::denies('category_delete'), Response::HTTP_FORBIDDEN, 'Forbidden');
-        $service = Service::where('id',$id)->get();
+        $service = Service::withTrashed()->where('category_id',$id)->get();
         $service_id = isset($service[0]->id) ? 1 : 0;
         if ($service_id == 1) {
             return redirect()->back()->with(['status-danger' => "this category cannot be deleted. Because this category foreign key save in Services master"]);

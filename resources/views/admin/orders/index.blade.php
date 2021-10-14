@@ -30,12 +30,15 @@ tr:nth-child(even) { background: #EEE; }
         <div class="widget-content widget-content-area">
             <div class="row">   
                 <div class="col-md-3">                     
-                    {{ Form::text('order_id',$request->order_id,['class' => 'form-control','placeholder' => "Enter Order Id"]) }}                                   
+                    {{ Form::label('Enter Order number', null, []) }}
+                    {{ Form::text('order_id',$request->order_id,['class' => 'form-control','placeholder' => "Enter Order number"]) }}                                   
                 </div>
                 <div class="col-md-3">
+                    {{ Form::label('Select Category', null, []) }}
                     {{ Form::select('category_id', $categories, $request->category_id, ['class' => 'form-control','placeholder' => 'Select Category']) }}
                 </div>
                 <div class="col-md-3">
+                    {{ Form::label('Select Service', null, []) }}
                     {{ Form::select('service_id', $services, $request->service_id, ['class' => 'form-control','placeholder' => 'Select Service']) }}
                 </div>
                 @php
@@ -49,26 +52,32 @@ tr:nth-child(even) { background: #EEE; }
                 ];
                 @endphp
                 <div class="col-md-3">
+                    {{ Form::label('Select Status', null, []) }}
                     {{ Form::select('status', $status, $request->status, ['class' => 'form-control','placeholder' => 'Select Status']) }}
                 </div>
                 <div class="col-md-3">
+                    {{ Form::label('Select Technician', null, []) }}
                     {{ Form::select('technician_id', $technicians, $request->technician_id, ['class' => 'form-control','placeholder' => 'Select Technician']) }}
                 </div>
-                <div class="col-md-3">                     
+                <div class="col-md-3">               
+                    {{ Form::label('Enter Mobile number', null, []) }}      
                     {{ Form::text('mobile',$request->mobile,['class' => 'form-control','placeholder' => "Enter Mobile"]) }}                                   
                 </div>
                 <div class="col-md-3">
+                    {{ Form::label('Select Start Date', null, []) }}      
                     {{ Form::text('start_date',$request->start_date,['class' => 'form-control date','placeholder' => "Start date"]) }}
                 </div>
 
                 <div class="col-md-3">
+                    {{ Form::label('End Start Date', null, []) }}      
                     {{ Form::text('end_date',$request->end_date,['class' => 'form-control date','placeholder' => "End date"]) }}
                 </div>
                 <div class="col-md-3">
+                    {{ Form::label('Select Time Slot', null, []) }}      
                     {{ Form::select('time_slot_id', $timeslots, $request->time_slot_id, ['class' => 'form-control','placeholder' => 'Select Time']) }}
                 </div>
                 <div class="col-md-3 d-flex">
-                    <button class="btn btn-primary mr-3" type="submit">
+                    <button class="btn btn-primary btn-lg" type="submit">
                         Filter
                     </button>
                     <a href="{{ route('orders.index') }}">
@@ -164,18 +173,18 @@ tr:nth-child(even) { background: #EEE; }
       </button>
   </div>
   <div class="modal-body">
-     <div class="form-group mb-3">
+   <div class="form-group mb-3">
 
-        {!! Form::open(['method' => 'POST','route' => ['orders.assign-order'],'enctype="multipart/form-data"']) !!}
-        {{Form::token()}}
-        @csrf
+    {!! Form::open(['method' => 'POST','route' => ['orders.assign-order'],'enctype="multipart/form-data"']) !!}
+    {{Form::token()}}
+    @csrf
 
-        <input type="hidden" name="id" id="order_id">
-        <input type="hidden" name="status" id="status">
-        <select id="technician-list" name="technician_id" class="form-control">
-            <!-- <option>technician-list</option> -->
-        </select>
-    </div>
+    <input type="hidden" name="id" id="order_id">
+    <input type="hidden" name="status" id="status">
+    <select id="technician-list" name="technician_id" class="form-control">
+        <!-- <option>technician-list</option> -->
+    </select>
+</div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -223,29 +232,29 @@ tr:nth-child(even) { background: #EEE; }
 
             $('#exampleModal').modal('show');
         }else{
-         if (!confirm("Do you want chage status")){
-          return false;
-      }       
+           if (!confirm("Do you want chage status")){
+              return false;
+          }       
 
-      $.ajax({
-        type: 'POST',
-        dataType: "json",
-        url: 'change-status',
-        data: {
-          'status': status,
-          'id': id
-      },
-      headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}'
-      },
-      success: function(data) {
-          Swal.fire(
-            'GREAT!', 'Status change successfully', 'success')
+          $.ajax({
+            type: 'POST',
+            dataType: "json",
+            url: 'change-status',
+            data: {
+              'status': status,
+              'id': id
+          },
+          headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          success: function(data) {
+              Swal.fire(
+                'GREAT!', 'Status change successfully', 'success')
+          }
+      });
       }
-  });
-  }
 
-});
+  });
 
     $('.admin_payment_status').change(function() { 
         if (!confirm("Do you want chage status")){
@@ -265,13 +274,13 @@ tr:nth-child(even) { background: #EEE; }
           'X-CSRF-TOKEN': '{{ csrf_token() }}'
       },
       success: function(data) {
-        Toast.fire({
-          icon: 'success',
-          title: 'Signed in successfully'
-      })
-        Swal.fire(
-            'GREAT!', 'Status change successfully', 'success')
-    }
+      //   Toast.fire({
+      //     icon: 'success',
+      //     title: 'Signed in successfully'
+      // })
+      Swal.fire(
+        'GREAT!', 'Status change successfully', 'success')
+  }
 });
   });
 
@@ -281,7 +290,7 @@ tr:nth-child(even) { background: #EEE; }
 
 <script type="text/javascript">
     $('.date').datepicker({  
-     format: 'yyyy-mm-dd'
- });  
+       format: 'yyyy-mm-dd'
+   });  
 </script> 
 @endsection

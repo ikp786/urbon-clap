@@ -53,19 +53,19 @@ class CartController extends BaseController
     {
         try
         {
-           $user_details = auth()->user();
-           $cart = Cart::with('services','time_slots')->where('user_id',$user_details->id)->get();            
-           if($cart) {         
-            return $data = CartResource::collection($cart);      
-            return $this->sendResponse('CART GET SUCCESSFULLY', new CartResource($data));
-        } else {
-            return $this->sendError('UNAUTHORIZE ACCESS', 200); 
-        }
+         $user_details = auth()->user();
+         $cart = Cart::with('services','time_slots')->where('user_id',$user_details->id)->get();            
+         if($cart) {         
+           $data = CartResource::collection($cart);      
+           return $this->sendResponse('CART GET SUCCESSFULLY', new CartResource($data));
+       } else {
+        return $this->sendError('UNAUTHORIZE ACCESS', 200); 
     }
-    catch (\Throwable $e)
-    {
-        return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
-    }   
+}
+catch (\Throwable $e)
+{
+    return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+}   
 }
 
 public function update(Request $request, $id){
