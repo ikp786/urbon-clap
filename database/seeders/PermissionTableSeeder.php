@@ -225,14 +225,83 @@ class PermissionTableSeeder extends Seeder
             ],
 
 
+            // Banner Multiple permissions
 
+
+            [
+                'name' => 'banner_multiple_access',
+            ],
+
+            [
+                'name' => 'banner_multiple_create',
+            ],
+
+            [
+                'name' => 'banner_multiple_store',
+            ],
+
+            [
+                'name' => 'banner_multiple_show',
+            ],
+
+            [
+                'name' => 'banner_multiple_edit',
+            ],
+            [
+                'name' => 'banner_multiple_update'
+            ],
+            [
+                'name' => 'banner_multiple_delete',
+            ],
+            [
+                'name' => 'banner_multiple_restore',
+            ],
+
+
+             // Banner Single permissions
+
+
+            [
+                'name' => 'banner_single_access',
+            ],            
+
+            [
+                'name' => 'banner_single_edit',
+            ],
+
+            [
+                'name' => 'banner_single_update',
+            ],
+
+
+
+
+            // Order permissions
+
+
+            [
+                'name' => 'order_access',
+            ],
+
+            [
+                'name' => 'order_change_status',
+            ],
+
+            [
+                'name' => 'order_admin_payment_received_status',
+            ],
+
+            [
+                'name' => 'order_asign',
+            ],
+            
         ];
 
         foreach($permissions as $permission){
             $checkExist = Permission::where('name',$permission['name'])->get();
             if(!isset($checkExist[0]->id)){
-            Permission::create($permission);
-        }
+                Permission::create($permission);
+            }
         }
 
     }

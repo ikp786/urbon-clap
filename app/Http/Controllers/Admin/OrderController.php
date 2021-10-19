@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
 use App\Models\User;
 use App\Models\Technician;
 use App\Models\Category;
@@ -11,6 +12,7 @@ use App\Models\Service;
 use App\Models\Order;
 use App\Models\Cart;
 use App\Models\TimeSlot;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 
@@ -24,7 +26,9 @@ class OrderController extends Controller
 
     function index(Request $request){
 
-        $order = Order::with('users','categories','services','technicians');        
+        abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
+
+        $order = Order::with('users','categories','services','technicians');       
         if (isset($request->mobile) && !empty($request->mobile)) {
             $order->where('mobile', 'LIKE', "%".$request->mobile."%");
         }        
@@ -64,6 +68,7 @@ class OrderController extends Controller
 
     function detail($order_id){
 
+        abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $orders = Order::with('users','categories','services','technicians')->where('order_id',$order_id)->get();
         if (!isset($orders[0]->id)) {
          return redirect()->back()->with(['status-danger' => "Sorry! wrong method."]);
@@ -74,42 +79,78 @@ class OrderController extends Controller
  }
 
  public function chageStatus(Request $request) {         
+
+    abort_if(Gate::denies('order_change_status'), Response::HTTP_FORBIDDEN, 'Forbidden');
     if(request()->ajax()){
         $order = Order::find($request->id);            
         $order->status = $request->status; 
         $order->save(); 
+        $message = 'Your order is '.$request->status.' successfully. order id '.$order->order_id;
+        Notification::create([
+            'user_id'           => User::find($request->id)['id'],
+            'role_id'           => 2,
+            'order_id'          => $order->order_id,
+            'order_tbl_id'      => $order->id,
+            'message'           => $message,
+            'deep_link'         => 'deep_link',
+
+        ]);
         return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
     }
-}
+}   
 
+    /**
+     * If Admin receive payment by technician status change mark paid
+     *     
+     */
 
-public function adminPaymentReceivedStatus(Request $request) { 
-    if(request()->ajax()){
+    public function adminPaymentReceivedStatus(Request $request){
+
+        abort_if(Gate::denies('order_admin_payment_received_status'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        if(request()->ajax()){
+            $order = Order::find($request->id);
+            $order->admin_payment_status = $request->status; 
+            $order->save(); 
+            return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
+        }
+    }
+
+    /**
+     * Get Technician for this category match for admin asign lead technician
+     *     
+     */
+
+    public function fetchTechniciansByCategory(Request $request)
+    {
+        abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $data['technicians'] = Technician::where("category_id",$request->category_id)->get(["name", "id"]);
+        return response()->json($data);
+    }
+
+    /**
+     * If nobody accept lead so admin asign manually lead Technician
+     *     
+     */
+
+    public function assignOrder(Request $request)
+    {   
+        abort_if(Gate::denies('order_asign'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $order = Order::find($request->id);
-        $order->admin_payment_status = $request->status; 
-        $order->save(); 
-        return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
+        $order->technician_id    =  $request->technician_id;
+        $order->status           =  $request->status;
+        $order->status_change_by =  Auth::user()->id;
+        $order->save();
+
+        // save notification in notification table
+        $message = 'Your order is '.$request->status.' to technician successfully. order id '.$order->order_id;
+        Notification::create([
+            'user_id'           => User::find($request->id)['id'],
+            'role_id'           => 2,
+            'order_id'          => $order->order_id,
+            'order_tbl_id'      => $order->id,
+            'message'           => $message,
+            'deep_link'         => 'deep_link',
+        ]);
+        return redirect()->back()->with(['status-success' => "Your Lead Assigned to Technician successfully."]);
     }
-}
-
-public function fetchTechniciansByCategory(Request $request)
-{
-    // echo $request->category_id.'qqq';die;
-    $data['technicians'] = Technician::where("category_id",$request->category_id)->get(["name", "id"]);
-    return response()->json($data);
-}
-
-public function assignOrder(Request $request)
-{
-    $order = Order::find($request->id);
-    $order->technician_id    =  $request->technician_id;
-    $order->status           =  $request->status;
-    $order->status_change_by =  Auth::user()->id;
-    $order->save();
-
-    return redirect()->back()->with(['status-success' => "Your Lead Assigned to Technician successfully."]);
-
-}
-
-
 }

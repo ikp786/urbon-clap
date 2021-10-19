@@ -96,4 +96,8 @@ class User extends Authenticatable
             }
         })->paginate(10);
     }
+
+    public function categories(){
+      return $this->hasOne(Category::class,'id','category_id');
+  }
 }

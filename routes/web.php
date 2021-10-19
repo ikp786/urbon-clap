@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\TimeSlotController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\BannerMultipleController;
+use App\Http\Controllers\Admin\BannerSingleController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,5 +93,20 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
         Route::post('admin-payment-received-status',[OrderController::class,'adminPaymentReceivedStatus'])->name('order.admin-payment-received-status');
         Route::get('detail/{id}',[OrderController::class,'detail'])->name('admin.orders.detail');
     });
+
+
+    // Route Multiple Banners
+    Route::resource('banner-multiples', BannerMultipleController::class);
+    Route::post('banner-multiple/change-status',[BannerMultipleController::class,'chageStatus'])->name('banner-multiple.change-status');
+    Route::group(['prefix'=>"banner-multiple"], function () {
+        Route::get('trash', [BannerMultipleController::class,'trash'])->name('banner-multiples.trash');
+        Route::get('restore/{id}', [BannerMultipleController::class,'restore'])->name('banner-multiples.restore');
+        Route::delete('delete{id}', [BannerMultipleController::class,'delete'])->name('banner-multiples.delete');
+    });
+
+
+    // Route Single Banners
+    Route::resource('banner-singles', BannerSingleController::class);
+    Route::post('banner-single/change-status',[BannerSingleController::class,'chageStatus'])->name('banner-single.change-status');   
     
 });

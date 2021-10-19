@@ -56,4 +56,27 @@ class ServiceController extends BaseController
     }
   }
 
+
+   public function searchService(Request $request)
+  {        
+    try {
+      \DB::beginTransaction();      
+      $service = Service::with('categories')->where('status','Active')
+      // ->where('mobile', 'LIKE', "%".$request->mobile."%");
+      ->where('name',   'LIKE',"%".$request->name."%")
+      ->get();      
+      \DB::commit();
+      $services = ServiceResource::collection($service);              
+      if(!isset($services[0]->id)){
+        return $this->sendError('Sorry! Service not available', 400);  
+      }
+      return $this->sendResponse('Service detail fetch successfully', $services);
+    }
+    catch (\Throwable $e)
+    {
+      \DB::rollback();
+      return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+    }
+  }
+
 }

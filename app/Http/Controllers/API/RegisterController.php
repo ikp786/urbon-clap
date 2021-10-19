@@ -9,6 +9,7 @@ use App\Models\Technician;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Http\Resources\UserProfileCollection;
+use App\Http\Resources\TechnicianHomeScreenResource;
 
 class RegisterController extends BaseController
 {
@@ -96,16 +97,57 @@ class RegisterController extends BaseController
         }
     }
 
-    public function login(Request $request)
+
+    public function technicianLogin(Request $request)
     {
-        if(Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password])){ 
-            $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')->accessToken; 
-            $success['name'] =  $user->name;
-            return $this->sendResponse($success, 'User login successfully.');
-        } 
-        else{ 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
-        } 
+        $error_message =    [
+            'mobile.required'    => 'Mobile number should be required',
+            'password.required' => 'Password should be required',
+        ];
+
+        $rules = [
+            'mobile'         => 'required',
+            'password'      => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules, $error_message);   
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->all(), 200);       
+        }        
+        try
+        {   
+            if (auth()->attempt(['mobile' => $request->mobile, 'password' => $request->password])) {
+                if(auth()->user()->role_id == 3){
+                    $access_token = auth()->user()->createToken(auth()->user()->name)->accessToken;
+                    return $this->sendResponse('LOGGED IN SUCCESSFULLY', ['access_token' => $access_token]);
+                }else{
+                    return $this->sendError('Invalid Credential', 200);     
+                }                
+            } else {
+                return $this->sendError('Invalid Credential', 200); 
+            }
+        }
+        catch (\Throwable $e)
+        {
+            \DB::rollback();
+            return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+        }
     }
+
+
+    public function technicianHomeScreenDetail(Request $request)
+    {        
+        // try
+        // {   
+           $data = auth()->user()::with('categories')->find(auth()->user()->id);
+           // dd($data);
+           // $userData = TechnicianHomeScreenResource::collection($data);
+           // dd($userData);
+           return $this->sendResponse('User data fetch successfully', new TechnicianHomeScreenResource($data));
+    //    }
+    //    catch (\Throwable $e)
+    //    {
+    //     \DB::rollback();
+    //     return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);
+    // }
+}
 }

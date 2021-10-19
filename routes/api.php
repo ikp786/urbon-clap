@@ -31,11 +31,16 @@ Route::post('user-register', [RegisterController::class, 'userRegister']);
 Route::post('user-login', [RegisterController::class, 'userLogin']);  
 Route::get('login', [RegisterController::class, 'login'])->name('login');
 
+//Route Technician Login
+Route::post('technician-login', [RegisterController::class, 'technicianLogin']);
+
+
 // Route Category
 Route::get('get-all-category', [CategoryController::class, 'getAllCategory'])->name('get-all-category');
 // Route Service
 Route::get('get-service-by-category/{id}', [ServiceController::class, 'getServiceByCategory'])->name('get-service-by-category');
 Route::get('get-service-detail/{id}', [ServiceController::class, 'getServiceDetail'])->name('get-service-detail');
+Route::get('search-service',[ServiceController::class, 'searchService'])->name('search-service');
 
 // Route Authenticate
 Route::group(['middleware' => ['auth:api']], function(){ 
@@ -59,10 +64,22 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     // Route Order
     Route::group(['prefix'=>"order"], function () {
+        // Route User Order
         Route::post('store', [OrderController::class, 'store'])->name('store');
         Route::get('user-order-history',[OrderController::class, 'userOrderHistory'])->name('user-order-history');
-
         Route::get('user-order-detail/{order_id}',[OrderController::class, 'userOrderDetail'])->name('user-order-detail');
+        // Route Technician Order
+        Route::get('technician-order-history/{status?}',[OrderController::class, 'technicianOrderHistory'])->name('technician-order-history');
+        Route::get('technician-order-detail/{order_id}',[OrderController::class, 'technicianOrderDetail'])->name('technician-order-detail');
+
+        Route::post('technician-order-accept-or-decline',[OrderController::class, 'technicianOrderAcceptOrDecline'])->name('technician-order-accept-or-decline');
+
+
+
+
 
     });
+
+    // Route Technician 
+    Route::get('technician-home-screen-detail',[RegisterController::class, 'technicianHomeScreenDetail'])->name('technician-home-screen-detail');  
 });
