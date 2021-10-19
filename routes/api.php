@@ -62,6 +62,12 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::get('delete/{id}', [CartController::class, 'destroy'])->name('delete');
     });
 
+    // Route Start Work
+    Route::post('start-work',[OrderController::class,'startWork'])->name('start-work');
+    // Route End Work
+    Route::post('end-work',[OrderController::class,'endWork'])->name('end-work');
+    // Route OTP verify After Complete Work
+    Route::post('verify-otp-complete-work',[OrderController::class,'verifyOtpCompleteWork'])->name('verify-otp-complete-work');
     // Route Order
     Route::group(['prefix'=>"order"], function () {
         // Route User Order
@@ -71,13 +77,7 @@ Route::group(['middleware' => ['auth:api']], function(){
         // Route Technician Order
         Route::get('technician-order-history/{status?}',[OrderController::class, 'technicianOrderHistory'])->name('technician-order-history');
         Route::get('technician-order-detail/{order_id}',[OrderController::class, 'technicianOrderDetail'])->name('technician-order-detail');
-
-        Route::post('technician-order-accept-or-decline',[OrderController::class, 'technicianOrderAcceptOrDecline'])->name('technician-order-accept-or-decline');
-
-
-
-
-
+        Route::post('technician-order-accept-or-decline',[OrderController::class, 'technicianOrderAcceptOrDecline'])->name('technician-order-accept-or-decline');        
     });
 
     // Route Technician 
