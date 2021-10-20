@@ -15,10 +15,10 @@ use App\Models\Notification;
 use App\Models\OrderDecline;
 use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Auth;
-use Validator;
 use App\Http\Resources\UserOrderResource;
 use App\Http\Resources\TechnicianOrderResource;
 use Illuminate\Support\Facades\Input;
+use Validator;
 
 class OrderController extends BaseController
 {
@@ -127,7 +127,6 @@ public function userOrderDetail($order_id){
           return $this->sendError('Sorry! Order Id not available.', 400);  
       }
       $order_detials = UserOrderResource::collection($order);
-
       return $this->sendResponse('Orders fetch successfully', $order_detials);
   }
   catch (\Throwable $e)
@@ -227,8 +226,9 @@ public function technicianOrderAcceptOrDecline(Request $request){
         'status'        => $request->status,
     ]);
     Order::where('order_id', $request->order_id)->update([
-        'status'        => 'Assigned',
-        'technician_id' => auth()->user()->id,
+        'status'            => 'Assigned',
+        'technician_id'     => auth()->user()->id,
+        'status_change_by'  =>  auth()->user()->id,
     ]);
 }
 
@@ -286,7 +286,8 @@ public function startWork(Request $request){
         }
     // update order status 
         $update = Order::find($orderDetail[0]->id);
-        $update->status = 'In-Process';
+        $update->status             = 'In-Process';
+        $updata->status_change_by   =  auth()->user()->id,
         $update->save();
         \DB::commit();
         return $this->sendResponse('Work Image uplod successfully.');
@@ -397,7 +398,8 @@ public function verifyOtpCompleteWork(Request $request){
         \DB::beginTransaction();            
     // update otp status 
         $update = Order::find($orderDetail[0]->id);
-        $update->otp_status = 1;
+        $update->otp_status        = 1;
+        $update->status_change_by  =  auth()->user()->id
         $update->save();        
         \DB::commit();
         return $this->sendResponse('Your work successfully done.');

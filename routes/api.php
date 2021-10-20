@@ -10,6 +10,8 @@ use App\Http\Controllers\API\TimeSlotController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\BannerController;
+use App\Http\Controllers\RattingController;
+use App\Http\Controllers\ContactUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +50,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     // Route User
     Route::get('user_profile', [UserController::class, 'userProfile']);
     Route::get('user/order-history', [UserController::class, 'userOrderHistory']);
+    Route::post('update-user-profile',[UserController::class,'updateUserProfile'])->name('update-user-profile');
     // Route Time Slot 
     Route::get('get-all-slot', [TimeSlotController::class, 'getAllTimeSlot'])->name('get-all-slot');
     Route::post('change-password', [UserController::class,'changePassword']);
@@ -77,4 +80,11 @@ Route::group(['middleware' => ['auth:api']], function(){
     });
     // Route Technician 
     Route::get('technician-home-screen-detail',[RegisterController::class, 'technicianHomeScreenDetail'])->name('technician-home-screen-detail');  
+    Route::post('change-online-status',[UserController::class,'changeOnlineStatus'])->name('change-online-status');
+
+    // Route Ratting
+    Route::post('save-ratting',[RattingController::class,'store'])->name('save-ratting');
 });
+
+// Route Contact Us
+    Route::post('save-contact-us',[ContactUsController::class,'store'])->name('save-contact-us');

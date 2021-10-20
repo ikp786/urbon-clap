@@ -11,6 +11,7 @@ use Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Rules\MatchOldPassword;
 use App\Http\Resources\UserProfileCollection;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends BaseController
 {
@@ -18,7 +19,7 @@ class UserController extends BaseController
         try
         {
             $user_details = auth()->user();
-            if($user_details) {
+            if($user_details){
                 return $this->sendResponse('PROFILE GET SUCCESSFULLY', new UserProfileCollection($user_details));
             } else {
                 return $this->sendError('UNAUTHORIZE ACCESS', 200); 
@@ -61,5 +62,77 @@ class UserController extends BaseController
             return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
         } 
     }
+
+
+    public function updateUserProfile(Request $request){
+
+    $error_message =    [
+        'name.required'    => 'should be required',
+        'mobile.required'  => 'Mobile Number should be required',
+        'email.required'  => 'Email should be required',
+        'mobile.unique'    => 'Mobile has been already taken',
+        'email.unique'     => 'Email has been already taken',    
+    ];
+    $rules = [    
+        'mobile'           => 'required|unique:users,mobile,'.auth()->user()->id.',id',
+        'email'            => 'required|email|unique:users,email,'.auth()->user()->id.',id',
+    ];
+
+    if(!empty($request->file('profile_pic'))) {
+        $rules['profile_pic']     = 'required|mimes:jpg,jpeg,png,gif,svg,webp';
+    }
+
+    $validator = Validator::make($request->all(), $rules, $error_message);   
+    if($validator->fails()){
+        return $this->sendError($validator->errors()->all(), 200);       
+    } 
+try
+{
+    $technician = auth()->user();
+    $input = $request->all();
+    // dd($input);
+    if($technician){
+        \DB::beginTransaction();
+        $technician = User::find(auth()->user()->id);
+        if(!empty($request->file('profile_pic'))){
+           if($request->profile_pic){
+               if(Storage::disk('public')->exists('technician_image/'.$technician->profile_pic)){
+                Storage::disk('public')->delete('technician_image/'.$technician->profile_pic); 
+            }
+            $fileName = time().'_'.auth()->user()->id.'_'.str_replace(" ","_",$request->profile_pic->getClientOriginalName());
+            $filePath = $request->file('profile_pic')->storeAs('technician_image', $fileName, 'public');
+            $input['profile_pic'] = $fileName;
+        }
+    }
+    $technician->update(array_filter($input));    
+    \DB::commit();
+    return $this->sendResponse('Profile update succssfully');
+} else {
+    return $this->sendError('UNAUTHORIZE ACCESS', 200); 
+}
+}
+catch (\Throwable $e)
+{
+\DB::rollback();
+return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+} 
+}
+
+
+public function changeOnlineStatus(){
+    try
+    {
+        \DB::beginTransaction();
+        $change = User::find(auth()->user()->id)->update(['online_status'=> auth()->user()->online_status == 'Online' ? 'Offline' : 'Online' ]);
+        \DB::commit();
+        return $this->sendResponse('Online Status change succssfully');
+
+    }
+    catch (\Throwable $e)
+    {
+        \DB::rollback();
+        return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+    } 
+}
 
 }

@@ -85,6 +85,7 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
         Route::delete('delete{id}', [TimeSlotController::class,'delete'])->name('timeslots.delete');
     });
 
+    // Route Order
     Route::group(['prefix' => 'orders'],function(){
         Route::get('index',[OrderController::class,'index'])->name('orders.index');
         Route::post('assign-order',[OrderController::class,'assignOrder'])->name('orders.assign-order');
@@ -92,6 +93,7 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
         Route::post('fetch-technicians-by-category',[OrderController::class,'fetchTechniciansByCategory'])->name('order.fetch-technicians-by-category');
         Route::post('admin-payment-received-status',[OrderController::class,'adminPaymentReceivedStatus'])->name('order.admin-payment-received-status');
         Route::get('detail/{id}',[OrderController::class,'detail'])->name('admin.orders.detail');
+        Route::get('export', [OrderController::class, 'export'])->name('admin.orders.export');
     });
 
 

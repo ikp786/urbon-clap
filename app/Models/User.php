@@ -28,7 +28,8 @@ class User extends Authenticatable
         'role_id',
         'mobile',
         'profile_pic',
-        'status'
+        'status',
+        'online_status'
     ];
 
     /**

@@ -96,7 +96,8 @@ tr:nth-child(even) { background: #EEE; }
 <div class="card">
 
     <div class="card-body">
-
+        <a href="{{ route('admin.orders.export') }}">
+<button>Export</button></a>
         <table class="table table-borderless table-hover">
             <tr class="bg-info text-light">
                 <th class="text-center">Order id</th>

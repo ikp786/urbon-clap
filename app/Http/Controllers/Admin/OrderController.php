@@ -14,6 +14,8 @@ use App\Models\Cart;
 use App\Models\TimeSlot;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\OrdersExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Validator;
 
 class OrderController extends Controller
@@ -71,19 +73,20 @@ class OrderController extends Controller
         abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
         $orders = Order::with('users','categories','services','technicians')->where('order_id',$order_id)->get();
         if (!isset($orders[0]->id)) {
-         return redirect()->back()->with(['status-danger' => "Sorry! wrong method."]);
-     }  
-     $order = $orders[0];
+           return redirect()->back()->with(['status-danger' => "Sorry! wrong method."]);
+       }  
+       $order = $orders[0];
 
-     return view('admin.orders.show',compact('order'));
- }
+       return view('admin.orders.show',compact('order'));
+   }
 
- public function chageStatus(Request $request) {         
+   public function chageStatus(Request $request) {         
 
     abort_if(Gate::denies('order_change_status'), Response::HTTP_FORBIDDEN, 'Forbidden');
     if(request()->ajax()){
         $order = Order::find($request->id);            
         $order->status = $request->status; 
+        $order->status_change_by =  Auth::user()->id;
         $order->save(); 
         $message = 'Your order is '.$request->status.' successfully. order id '.$order->order_id;
         Notification::create([
@@ -93,7 +96,6 @@ class OrderController extends Controller
             'order_tbl_id'      => $order->id,
             'message'           => $message,
             'deep_link'         => 'deep_link',
-
         ]);
         return response()->json(['success'=>' status change '.$request->status.' successfully.']); 
     }
@@ -138,9 +140,8 @@ class OrderController extends Controller
         $order = Order::find($request->id);
         $order->technician_id    =  $request->technician_id;
         $order->status           =  $request->status;
-        $order->status_change_by =  Auth::user()->id;
+        $order->status_change_by =  auth::user()->id;
         $order->save();
-
         // save notification in notification table
         $message = 'Your order is '.$request->status.' to technician successfully. order id '.$order->order_id;
         Notification::create([
@@ -152,5 +153,10 @@ class OrderController extends Controller
             'deep_link'         => 'deep_link',
         ]);
         return redirect()->back()->with(['status-success' => "Your Lead Assigned to Technician successfully."]);
+    }
+
+    public function export() 
+    {
+        return Excel::download(new OrdersExport, 'orders.csv');
     }
 }
