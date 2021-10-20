@@ -15,7 +15,7 @@
 
 <div class="card">
     <div class="card-body">
-        @can('user_create')
+        @can('users_access')
         <a href="{{ route('users.index') }}" class="btn btn-primary">back to list</a>
         @endcan
         <br /><br />
@@ -55,7 +55,7 @@
                     <form action="{{ route('users.delete', $user->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this users?')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this users?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                 </td>

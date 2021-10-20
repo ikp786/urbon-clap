@@ -40,7 +40,7 @@
                     <form action="{{ route('categories.delete', $category->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure category delete this category')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure category delete this category')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                     @can('category_restore')

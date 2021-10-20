@@ -38,11 +38,11 @@
 
 <div class="card">
     <div class="card-body">
-        @can('user_create')
+        @can('technician_create')
         <a href="{{ route('technicians.create') }}" class="btn btn-primary">Add New Technician</a>
         @endcan
 
-        @can('user_create')
+        @can('technician_access')
         <a href="{{ route('technicians.trash') }}" class="btn btn-primary">Got to trash list</a>
         @endcan
         <br /><br />
@@ -81,16 +81,16 @@
                 </td>
                 <td>
                     @can('technician_show')
-                    <a href="{{ route('technicians.show', $technician->id) }}" class="btn btn-sm btn-success">Show</a>
+                    <a href="{{ route('technicians.show', $technician->id) }}" class="btn btn-sm btn-success"><i class="fa fa-trash" style="font-size:14px"></i></a>
                     @endcan
                     @can('technician_edit')
-                    <a href="{{ route('technicians.edit', $technician->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{{ route('technicians.edit', $technician->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                     @endcan
                     @can('technician_delete')
                     <form action="{{ route('technicians.destroy', $technician->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Trash</button>
+                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                 </td>

@@ -28,13 +28,13 @@
                             <td>{{$permission->name}}</td>
                             <td>
                                     @can('permission_edit')
-                                        <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                                     @endcan
                                     @can('permission_delete')
                                 <form action="{{ route('permissions.destroy', $permission->id) }}" class="d-inline-block" method="post">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Delete</button>
+                                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                                 </form>
                                 @endcan
                             </td>

@@ -36,15 +36,20 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
         }
-        $cart = Cart::where('user_id',auth()->user()->id)->get();        
+        // get Cart Detail for cart checkout and place order
+        $cart = Cart::where('user_id',auth()->user()->id)->get();
+        // check cart empty or not
         if (isset($cart[0]->id)) {
             try {
                 \DB::beginTransaction();
                 foreach ($cart as $key => $value) {
+                    // get Time Slot from time_slots table
                     $slotData       = TimeSlot::find($value->time_slot_id);
+                    // get Service detail  from services table
                     $serviceData    = Service::find($value->service_id);
-                    // $totalOrderInOrderTable = Order::count();
+                    // generate order id 
                     $order_id  = strtoupper(substr($serviceData->name,0,2)).'-'.date('Ymd').rand(1000,9999).auth()->user()->id.Order::count()+1;
+                    // create Array for Store data in orders table
                     $data = [
                         'order_id'                  =>  $order_id,
                         'order_amount'              =>  $serviceData->service_amount,
@@ -66,7 +71,6 @@ class OrderController extends BaseController
                     ];
                     // Save order in Order Table
                     $id = Order::create($data)->id;
-
                     // Save Notification In Notification Table
                     $message = 'Your order is submited successfully. order id '.$order_id;
                     Notification::create([
@@ -76,11 +80,9 @@ class OrderController extends BaseController
                         'order_tbl_id'      => $id,
                         'message'           => $message,
                         'deep_link'         => 'deep_link',
-                        
                     ]);
-
                     // Delete Lead In Cart
-                    //$cart = Cart::where('user_id',auth()->user()->id)->forceDelete();      
+                    $cart = Cart::where('user_id',auth()->user()->id)->forceDelete();      
                 }
                 \DB::commit();
                 return $this->sendResponse('Thank you for your Order');
@@ -89,10 +91,9 @@ class OrderController extends BaseController
             {
                 \DB::rollback();
                 return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
-            } 
-
+            }
         }else{
-          return $this->sendError('Sorry! your Order not be placed. Because your cart is empty', 400);    
+          return $this->sendError('Sorry! your Order not be placed. Because your cart is empty', 400);
       }
   }
 
@@ -105,8 +106,8 @@ class OrderController extends BaseController
       if (!isset($order[0]->id)) {
           return $this->sendError('Sorry! order not available yet.', 400);  
       }
-      return $order_lit = UserOrderResource::collection($order);
-      return $this->sendResponse('Orders fetch successfully', $order_lit);
+      $order_list = UserOrderResource::collection($order);
+      return $this->sendResponse('Orders fetch successfully', $order_list);
   }
   catch (\Throwable $e)
   {
@@ -140,7 +141,7 @@ public function technicianOrderHistory($status=null){
 
     try {
       \DB::beginTransaction();
-      $orders = Order::with('services','users','order_declines');
+      $orders = Order::with('services','users','order_declines')->where('category_id',auth()->user()->category_id);
       if ($status != 'All'){
          $orders->where('status',$status);   
      }      
@@ -157,8 +158,8 @@ public function technicianOrderHistory($status=null){
     }
 }
 
-$order_lit = TechnicianOrderResource::collection($data);
-return $this->sendResponse('Orders fetch successfully', $order_lit);
+$order_list = TechnicianOrderResource::collection($data);
+return $this->sendResponse('Orders fetch successfully', $order_list);
 }
 catch (\Throwable $e)
 {
@@ -178,7 +179,6 @@ public function technicianOrderDetail($order_id){
           return $this->sendError('Sorry! Order Id not available.', 400);  
       }
       $order_detials = TechnicianOrderResource::collection($order);
-
       return $this->sendResponse('Orders fetch successfully', $order_detials);
   }
   catch (\Throwable $e)
@@ -191,48 +191,49 @@ public function technicianOrderDetail($order_id){
 
 public function technicianOrderAcceptOrDecline(Request $request){
 
-
     $error_message =    [            
         'order_id.required'  => 'Order Id should be required',
-        'order_id.exists'    => 'Order Id did not match exist',
-        'status.required'    => 'status  does not exist',           
+        'order_id.exists'    => 'Order Id did not exist',
+        'status.required'    => 'status type select Accept or Decline',
 
     ];
     $rules = [
         'order_id'   => 'required|exists:orders,order_id',            
         'status'     => 'required|in:Accept,Decline',
-    ];    
+    ];
     $validator = Validator::make($request->all(), $rules, $error_message);
     if($validator->fails()){
-        return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
+        return $this->sendError(implode(", ",$validator->errors()->all()), 200);
     }
-
     try {
       \DB::beginTransaction();
       $order = Order::where('order_id',$request->order_id)->get();
-      if ($request->status == 'Decline') {
-          OrderDecline::create([
-            'order_id'      => $request->order_id,
-            'order_tbl_id'  => isset($order[0]['id']) ? $order[0]['id'] : '',
-            'technician_id' => auth()->user()->id,
-            'status'        => $request->status,
-        ]);
-          return $this->sendResponse('Orders Decline successfully');
-      }else{
-        OrderDecline::create([
-            'order_id'      => $request->order_id,
-            'order_tbl_id'  => isset($order[0]['id']) ? $order[0]['id'] : '',
-            'technician_id' => auth()->user()->id,
-            'status'        => $request->status,
-        ]);
-        Order::where('order_id', $request->order_id)->update([
-            'status'        => 'Assigned',
-            'technician_id' => auth()->user()->id,
-        ]);
+      if(isset($order[0]->status) && $order[0]->status != 'Pending'){
+        return $this->sendError('Sorry! this order is '.$order[0]->status, 400);
     }
+    if ($request->status == 'Decline') {
+      OrderDecline::create([
+        'order_id'      => $request->order_id,
+        'order_tbl_id'  => isset($order[0]['id']) ? $order[0]['id'] : '',
+        'technician_id' => auth()->user()->id,
+        'status'        => $request->status,
+    ]);
+      return $this->sendResponse('Orders Decline successfully');
+  }else{
+    OrderDecline::create([
+        'order_id'      => $request->order_id,
+        'order_tbl_id'  => isset($order[0]['id']) ? $order[0]['id'] : '',
+        'technician_id' => auth()->user()->id,
+        'status'        => $request->status,
+    ]);
+    Order::where('order_id', $request->order_id)->update([
+        'status'        => 'Assigned',
+        'technician_id' => auth()->user()->id,
+    ]);
+}
 
-    \DB::commit();
-    return $this->sendResponse('Orders Assigned successfully');
+\DB::commit();
+return $this->sendResponse('Orders Assigned successfully');
 }
 catch (\Throwable $e)
 {
@@ -241,26 +242,23 @@ catch (\Throwable $e)
 }
 }
 
-
 public function startWork(Request $request){
 
-    // dd($request);
-    // $error_message =    [            
-    //     'order_id.required'             => 'Order Id should be required',
-    //     'order_id.exists'               => 'Order Id did not match exist',
-    //     'work_picture.required'         => 'Work Picture should be required',
-    //     'mimes.required'                => 'Image format jpg,jpeg,png,gif,svg,webp',
-
-    // ];
-    // $rules = [
-    //     'order_id'          => 'required|exists:orders,order_id',            
-    //     'work_picture'      => 'required|mimes:jpg,jpeg,png,gif,svg,webp'
-    // ];    
-    // $validator = Validator::make($request->all(), $rules, $error_message);
-    // if($validator->fails()){
-    //     return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
-    // }
-
+    $error_message =    [            
+        'order_id.required'             => 'Order Id should be required',
+        'order_id.exists'               => 'Order Id did not match exist',
+        'work_picture.required'         => 'Work Picture should be required',
+        'work_picture.array'            => 'Work Picture Accepted in array',
+        'mimes.required'                => 'Image format jpg,jpeg,png,gif,svg,webp',
+    ];
+    $rules = [
+        'order_id'          => 'required|exists:orders,order_id',            
+        'work_picture'      => 'required|array|mimes:jpg,jpeg,png,gif,svg,webp'
+    ];    
+    $validator = Validator::make($request->all(), $rules, $error_message);
+    if($validator->fails()){
+        return $this->sendError(implode(", ",$validator->errors()->all()), 200);
+    }
     // get Order Details
     $orderDetail = Order::where('order_id',$request->order_id)->where('technician_id',auth()->user()->id)->get();
     // check Right Technician for this order asigned
@@ -277,7 +275,7 @@ public function startWork(Request $request){
             foreach($request->file('work_picture') as $file){
                 $fileName = rand(1000,9999).time().'_'.str_replace(" ","_",$file->getClientOriginalName());            
                 $filePath = $file->storeAs('work_picture', $fileName, 'public');
-            // save work image 
+            // save work image
                 OrderDetail::create([
                     'order_id'       => $request->order_id,
                     'order_tbl_id'   => $orderDetail[0]->id,
@@ -300,26 +298,23 @@ public function startWork(Request $request){
   }
 }
 
-
 public function endWork(Request $request){
 
-    // dd($request);
-    // $error_message =    [            
-    //     'order_id.required'             => 'Order Id should be required',
-    //     'order_id.exists'               => 'Order Id did not match exist',
-    //     'work_picture.required'         => 'Work Picture should be required',
-    //     'mimes.required'                => 'Image format jpg,jpeg,png,gif,svg,webp',
+    $error_message =    [            
+        'order_id.required'             => 'Order Id should be required',
+        'order_id.exists'               => 'Order Id did not match exist',
+        'work_picture.required'         => 'Work Picture should be required',
+        'mimes.required'                => 'Image format jpg,jpeg,png,gif,svg,webp',
 
-    // ];
-    // $rules = [
-    //     'order_id'          => 'required|exists:orders,order_id',            
-    //     'work_picture'      => 'required|mimes:jpg,jpeg,png,gif,svg,webp'
-    // ];    
-    // $validator = Validator::make($request->all(), $rules, $error_message);
-    // if($validator->fails()){
-    //     return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
-    // }
-
+    ];
+    $rules = [
+        'order_id'          => 'required|exists:orders,order_id',            
+        'work_picture'      => 'required|mimes:jpg,jpeg,png,gif,svg,webp'
+    ];    
+    $validator = Validator::make($request->all(), $rules, $error_message);
+    if($validator->fails()){
+        return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
+    }
     // get Order Details
     $orderDetail = Order::where('order_id',$request->order_id)->where('technician_id',auth()->user()->id)->get();
     // check Right Technician for this order asigned
@@ -350,9 +345,9 @@ public function endWork(Request $request){
         $update = Order::find($orderDetail[0]->id);
         $update->otp = $otp;
         if($request->additional_amount != ''){
-        $update->additional_amount = $request->additional_amount;
-        $finalAmount = $update->order_amount + $request->additional_amount;
-        $update->final_payment = $finalAmount;
+            $update->additional_amount = $request->additional_amount;
+            $finalAmount = $update->order_amount + $request->additional_amount;
+            $update->final_payment = $finalAmount;
         }
         $update->save();
         $user = User::find($orderDetail[0]->user_id);
@@ -368,10 +363,8 @@ public function endWork(Request $request){
   }
 }
 
-
 public function verifyOtpCompleteWork(Request $request){
 
-    
     $error_message =    [            
         'order_id.required'             => 'Order Id should be required',
         'order_id.exists'               => 'Order Id did not match exist',
@@ -386,7 +379,6 @@ public function verifyOtpCompleteWork(Request $request){
     if($validator->fails()){
         return $this->sendError(implode(", ",$validator->errors()->all()), 200);       
     }
-
     // get Order Details
     $orderDetail = Order::where('order_id',$request->order_id)->where('technician_id',auth()->user()->id)->get();
     // check Right Technician for this order asigned
@@ -397,12 +389,10 @@ public function verifyOtpCompleteWork(Request $request){
     if ($orderDetail[0]->status != 'In-Process'){
         return $this->sendError('Sorry! your order is '.$orderDetail[0]->status, 400);
     }
-
     // check OTP
     if ($orderDetail[0]->otp != $request->otp){
         return $this->sendError('Sorry! OTP did not match.', 400);
     }
-
     try {
         \DB::beginTransaction();            
     // update otp status 
@@ -419,21 +409,16 @@ public function verifyOtpCompleteWork(Request $request){
   }
 }
 
+public function send_sms_otp($mobile_number, $verification_otp){        
 
-
-
-public function send_sms_otp($mobile_number, $verification_otp)
-    {
-        // echo $mobile_number;die;
-        $opt_url = "https://2factor.in/API/V1/fd9c6a99-19d7-11ec-a13b-0200cd936042/SMS/".$mobile_number."/".$verification_otp."/OTP_TAMPLATE";
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $opt_url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_PROXYPORT, "80");
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($curl);
-        return;
-    }
-
+    $opt_url = "https://2factor.in/API/V1/fd9c6a99-19d7-11ec-a13b-0200cd936042/SMS/".$mobile_number."/".$verification_otp."/OTP_TAMPLATE";
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $opt_url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curl, CURLOPT_PROXYPORT, "80");
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    $result = curl_exec($curl);
+    return;
+}
 
 }

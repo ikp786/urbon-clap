@@ -29,15 +29,15 @@
                 <td>{{$service->service_description}}</td>
                 <td><img src="{{asset('storage/app/public/service/'.$service->service_thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>
-                    @can('service_restore')
+                    @can('service_delete')
                     <form action="{{ route('services.delete', $service->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this Service')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this Service')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
 
-                    @can('permission_delete')
+                    @can('service_restore')
                     <a href="{{ route('services.restore',$service->id) }}" class="btn btn-sm btn-warning">restore</a>
                     @endcan
 

@@ -76,16 +76,16 @@
                 <!-- <td>{{--$user->role->title ?? "--"--}}</td> -->
                 <td>
                     @can('user_show')
-                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-success">Show</a>
+                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-success"><i class="fa fa-eye" style="font-size:14px"></i></a>
                     @endcan
                     @can('user_edit')
-                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                     @endcan
                     @can('user_delete')
                     <form action="{{ route('users.destroy', $user->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure to delete this User?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                     

@@ -37,16 +37,16 @@
                 </td>                
                 <td>
                     @can('banner_multiple_show')
-                    <a href="{{ route('banner-multiples.show', $banner->id) }}" class="btn btn-sm btn-success">Show</a>
+                    <a href="{{ route('banner-multiples.show', $banner->id) }}" class="btn btn-sm btn-success"><i class="fa fa-eye" style="font-size:14px"></i></a>
                     @endcan
                     @can('banner_multiple_edit')
-                    <a href="{{ route('banner-multiples.edit', $banner->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{{ route('banner-multiples.edit', $banner->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                     @endcan
                     @can('banner_multiple_delete')
                     <form action="{{ route('banner-multiples.destroy', $banner->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure to delete?')" class="btn btn-sm btn-danger">Trash</button>
+                        <button type="submit" onclick="return confirm('Are you sure to delete?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                 </td>

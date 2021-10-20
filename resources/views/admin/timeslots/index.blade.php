@@ -6,11 +6,11 @@
     <div class="card-header">{{ __('Time Slot List') }}</div>
 
     <div class="card-body">
-        @can('category_create')
+        @can('timeslot_create')
         <a href="{{ route('timeslots.create') }}" class="btn btn-primary">Add New Slot</a>
         @endcan
 
-        @can('category_access')
+        @can('timeslot_access')
         <a href="{{ route('timeslots.trash') }}" class="btn btn-primary">Go to trash</a>
         @endcan
         <br /><br />
@@ -31,14 +31,14 @@
                 </td>
 
                 <td>
-                    @can('category_edit')
-                    <a href="{{ route('timeslots.edit',$timeslot->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    @can('timeslot_edit')
+                    <a href="{{ route('timeslots.edit',$timeslot->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                     @endcan
-                    @can('category_delete')
+                    @can('timeslot_destroy')
                     <form action="{{ route('timeslots.destroy', $timeslot->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure to trash this slot?')" class="btn btn-sm btn-danger">Trash</button>
+                        <button type="submit" onclick="return confirm('Are you sure to trash this slot?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                 </td>

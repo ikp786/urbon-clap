@@ -30,16 +30,16 @@
                             <td>{{$role->short_code ?? '--'}}</td>
                             <td>
                                     @can('role_show')
-                                        <a href="{{ route('roles.show', $role->id) }}" class="btn btn-sm btn-success">View</a>
+                                        <a href="{{ route('roles.show', $role->id) }}" class="btn btn-sm btn-success"><i class="fa fa-eye" style="font-size:14px"></i></a>
                                     @endcan
                                     @can('role_edit')
-                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit" style="font-size:14px"></i></a>
                                     @endcan
                                     @can('role_delete')
                                         <form action="{{ route('roles.destroy', $role->id) }}" class="d-inline-block" method="post">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">Delete</button>
+                                                <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                                         </form>
                                     @endcan
                             </td>

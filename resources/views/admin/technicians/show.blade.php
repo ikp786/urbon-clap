@@ -52,10 +52,10 @@
                     </tr>
 
 
-                    <tr>
+                    <!-- <tr>
                         <th>Role</th>
-                        <td>{{ $technician->role->title ?? '--' }}</td>
-                    </tr>
+                        <td>{{-- $technician->role->title ?? '--' --}}</td>
+                    </tr> -->
 
                 </table>
 

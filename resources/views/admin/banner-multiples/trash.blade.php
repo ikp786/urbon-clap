@@ -40,15 +40,15 @@
                 @endif</td>
 
                 <td>
-                    @can('technician_restore')
+                    @can('banner_multiple_restore')
                     <a href="{{ route('banner-multiples.restore', $banner->id) }}" class="btn btn-sm btn-success">Restore</a>
                     @endcan
                     
-                    @can('technician_delete')
+                    @can('banner_multiple_delete')
                     <form action="{{ route('banner-multiples.delete', $banner->id) }}" class="d-inline-block" method="post">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this banner?')" class="btn btn-sm btn-danger">Delete</button>
+                        <button type="submit" onclick="return confirm('Are you sure to permanent delete this banner?')" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:14px"></i></button>
                     </form>
                     @endcan
                 </td>

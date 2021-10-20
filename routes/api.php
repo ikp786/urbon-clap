@@ -9,7 +9,7 @@ use App\Http\Controllers\API\ServiceController;
 use App\Http\Controllers\API\TimeSlotController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\OrderController;
-
+use App\Http\Controllers\API\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,18 +30,16 @@ use App\Http\Controllers\API\OrderController;
 Route::post('user-register', [RegisterController::class, 'userRegister']);
 Route::post('user-login', [RegisterController::class, 'userLogin']);  
 Route::get('login', [RegisterController::class, 'login'])->name('login');
-
 //Route Technician Login
 Route::post('technician-login', [RegisterController::class, 'technicianLogin']);
-
-
 // Route Category
 Route::get('get-all-category', [CategoryController::class, 'getAllCategory'])->name('get-all-category');
 // Route Service
 Route::get('get-service-by-category/{id}', [ServiceController::class, 'getServiceByCategory'])->name('get-service-by-category');
 Route::get('get-service-detail/{id}', [ServiceController::class, 'getServiceDetail'])->name('get-service-detail');
 Route::get('search-service',[ServiceController::class, 'searchService'])->name('search-service');
-
+Route::get('fetch-single-banner',[BannerController::class,'fetchSingleBanner'])->name('fetch-single-banner');
+Route::get('fetch-multiple-banner',[BannerController::class,'fetchMultipleBanner'])->name('fetch-Multiple-banner');
 // Route Authenticate
 Route::group(['middleware' => ['auth:api']], function(){ 
     Route::get('/user', function (Request $request){
@@ -53,7 +51,6 @@ Route::group(['middleware' => ['auth:api']], function(){
     // Route Time Slot 
     Route::get('get-all-slot', [TimeSlotController::class, 'getAllTimeSlot'])->name('get-all-slot');
     Route::post('change-password', [UserController::class,'changePassword']);
-
     // Route Cart
     Route::group(['prefix'=>"carts"], function () {
         Route::post('store', [CartController::class, 'store'])->name('store');
@@ -61,7 +58,6 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::post('update/{id}', [CartController::class, 'update'])->name('update');
         Route::get('delete/{id}', [CartController::class, 'destroy'])->name('delete');
     });
-
     // Route Start Work
     Route::post('start-work',[OrderController::class,'startWork'])->name('start-work');
     // Route End Work
@@ -79,7 +75,6 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::get('technician-order-detail/{order_id}',[OrderController::class, 'technicianOrderDetail'])->name('technician-order-detail');
         Route::post('technician-order-accept-or-decline',[OrderController::class, 'technicianOrderAcceptOrDecline'])->name('technician-order-accept-or-decline');        
     });
-
     // Route Technician 
     Route::get('technician-home-screen-detail',[RegisterController::class, 'technicianHomeScreenDetail'])->name('technician-home-screen-detail');  
 });
