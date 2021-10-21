@@ -8,7 +8,7 @@
         <table class="table table-borderless">
             <tr>
                 <th>Photo</th>
-                <td><img src="{{asset('storage/app/public/banner/'.$banner->banner)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/banner/'.$banner->banner)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;"></td>
             </tr>
             <tr>
                 <th>ID</th>

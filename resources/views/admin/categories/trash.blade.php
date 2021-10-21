@@ -25,7 +25,7 @@
             <tr>
                 <td class="text-center">{{$category->id}}</td>
                 <td>{{$category->name}}</td>
-                <td><img src="{{asset('storage/app/public/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>@if($category->status == 'Active')
                     <span style="color:green;">
                         <b>{{$category->status}}</b>

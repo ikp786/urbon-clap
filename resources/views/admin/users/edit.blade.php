@@ -110,7 +110,7 @@
         <div class="form-group row">            
             {{ Form::label('Profile Photo', null, ['class' => 'required col-md-4 col-form-label text-md-right']) }}
             <div class="col-md-6">                     
-                <img src="{{asset('storage/app/public/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;">
+                <img src="{{asset('storage/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;">
             </div>
         </div>
 

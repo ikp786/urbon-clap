@@ -33,7 +33,7 @@
             @forelse ($users as $user)
             <tr>
                 <td class="text-center">{{$user->id}}</td>
-                <td><img src="{{asset('storage/app/public/user_image/'.$user->profile_pic)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/user_image/'.$user->profile_pic)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>{{$user->name}}</td>
                 <td>{{$user->mobile}}</td>
                 <td>{{$user->email}}</td>                

@@ -17,7 +17,7 @@
 
                     <tr>
                         <th>Photo</th>
-                        <td><img src="{{asset('storage/app/public/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;"></td>
+                        <td><img src="{{asset('storage/user_image/'.$user->profile_pic)}}" style="max-height: 90px; max-width: 90px; border-radius: 15px;"></td>
                     </tr>
 
                     <tr>

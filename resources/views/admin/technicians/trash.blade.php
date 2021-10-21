@@ -35,7 +35,7 @@
             @forelse ($technicians as $technician)
             <tr>
                 <td class="text-center">{{$technician->id}}</td>
-                <td><img src="{{asset('storage/app/public/technician_image/'.$technician->profile_pic)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/technician_image/'.$technician->profile_pic)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>{{$technician->name}}</td>
                 <td>{{$technician->mobile}}</td>
                 <td>{{$technician->email}}</td>

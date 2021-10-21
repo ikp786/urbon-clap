@@ -27,7 +27,7 @@
                 <td>{{isset($service->categories->name) ? $service->categories->name : ''}}</td>
                 <td>{{$service->service_amount}}</td>
                 <td>{{$service->service_description}}</td>
-                <td><img src="{{asset('storage/app/public/service/'.$service->service_thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/service/'.$service->service_thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>
                     @can('service_delete')
                     <form action="{{ route('services.delete', $service->id) }}" class="d-inline-block" method="post">

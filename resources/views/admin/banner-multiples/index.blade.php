@@ -31,7 +31,7 @@
             @forelse ($banners as $banner)
             <tr>
                 <td class="text-center">{{$banner->id}}</td>
-                <td><img src="{{asset('storage/app/public/banner/'.$banner->banner)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/banner/'.$banner->banner)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>{{$banner->title}}</td>                
                 <td><input data-id="{{ $banner->id }}" technician_id="{{ $banner->id }}" status="{{ $banner->status }}"  status="{{ $banner->status }}"  class="toggle-class" data-toggle="toggle" data-on="Active" data-off="Inactive" data-onstyle="warning" data-offstyle="dark" type="checkbox" {{ $banner->status == 'Active' ? 'checked' : '' }}>
                 </td>                

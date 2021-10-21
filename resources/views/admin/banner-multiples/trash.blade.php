@@ -27,7 +27,7 @@
             @forelse ($banners as $banner)
             <tr>
                 <td class="text-center">{{$banner->id}}</td>
-                <td><img src="{{asset('storage/app/public/banner/'.$banner->banner)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/banner/'.$banner->banner)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td>{{$banner->title}}</td>                
                 <td>@if($banner->status == 'Active')
                     <span style="color:green;">

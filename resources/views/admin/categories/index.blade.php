@@ -28,7 +28,7 @@
             <tr>
                 <td class="text-center">{{$category->id}}</td>
                 <td>{{$category->name}}</td>
-                <td><img src="{{asset('storage/app/public/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
+                <td><img src="{{asset('storage/category/'.$category->thumbnail)}}" style="max-height: 50px; max-width: 50px; border-radius: 15px;"></td>
                 <td><input data-id="{{ $category->id }}" category_id="{{ $category->id }}" status="{{ $category->status }}"  status="{{ $category->status }}"  class="toggle-class" data-toggle="toggle" data-on="Active" data-off="Inactive" data-onstyle="warning" data-offstyle="dark" type="checkbox" {{ $category->status == 'Active' ? 'checked' : '' }}>
                 </td>
 
