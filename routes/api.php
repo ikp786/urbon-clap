@@ -42,8 +42,10 @@ Route::get('get-service-detail/{id}', [ServiceController::class, 'getServiceDeta
 Route::get('search-service',[ServiceController::class, 'searchService'])->name('search-service');
 Route::get('fetch-single-banner',[BannerController::class,'fetchSingleBanner'])->name('fetch-single-banner');
 Route::get('fetch-multiple-banner',[BannerController::class,'fetchMultipleBanner'])->name('fetch-Multiple-banner');
+
 // Route Authenticate
 Route::group(['middleware' => ['auth:api']], function(){ 
+
     Route::get('/user', function (Request $request){
         return $request->user();
     });
@@ -51,11 +53,13 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::get('user_profile', [UserController::class, 'userProfile']);
     Route::get('user/order-history', [UserController::class, 'userOrderHistory']);
     Route::post('update-user-profile',[UserController::class,'updateUserProfile'])->name('update-user-profile');
+
     // Route Time Slot 
     Route::get('get-all-slot', [TimeSlotController::class, 'getAllTimeSlot'])->name('get-all-slot');
     Route::post('change-password', [UserController::class,'changePassword']);
     // Route Cart
     Route::group(['prefix'=>"carts"], function () {
+
         Route::post('store', [CartController::class, 'store'])->name('store');
         Route::get('get-data',[CartController::class, 'index'])->name('get-data');
         Route::post('update/{id}', [CartController::class, 'update'])->name('update');
@@ -69,10 +73,12 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('verify-otp-complete-work',[OrderController::class,'verifyOtpCompleteWork'])->name('verify-otp-complete-work');
     // Route Order
     Route::group(['prefix'=>"order"], function () {
+
         // Route User Order
         Route::post('store', [OrderController::class, 'store'])->name('store');
         Route::get('user-order-history',[OrderController::class, 'userOrderHistory'])->name('user-order-history');
         Route::get('user-order-detail/{order_id}',[OrderController::class, 'userOrderDetail'])->name('user-order-detail');
+        Route::post('cancel',[OrderController::class,'cancel'])->name('order.cancel');
         // Route Technician Order
         Route::get('technician-order-history/{status?}',[OrderController::class, 'technicianOrderHistory'])->name('technician-order-history');
         Route::get('technician-order-detail/{order_id}',[OrderController::class, 'technicianOrderDetail'])->name('technician-order-detail');
@@ -87,4 +93,4 @@ Route::group(['middleware' => ['auth:api']], function(){
 });
 
 // Route Contact Us
-    Route::post('save-contact-us',[ContactUsController::class,'store'])->name('save-contact-us');
+Route::post('save-contact-us',[ContactUsController::class,'store'])->name('save-contact-us');

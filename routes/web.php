@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\TimeSlotController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\BannerMultipleController;
 use App\Http\Controllers\Admin\BannerSingleController;
+use App\Http\Controllers\ContactUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,5 +111,6 @@ Route::group(['prefix' => 'admin','middleware' => ['auth','AdminPanelAccess']], 
     // Route Single Banners
     Route::resource('banner-singles', BannerSingleController::class);
     Route::post('banner-single/change-status',[BannerSingleController::class,'chageStatus'])->name('banner-single.change-status');   
+    Route::get('contact-us/index',[ContactUsController::class,'index'])->name('contact-us.index');
     
 });

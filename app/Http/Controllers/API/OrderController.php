@@ -136,6 +136,44 @@ public function userOrderDetail($order_id){
   }
 }
 
+public function cancel(Request $request){
+
+ $error_message =    [            
+    'order_id.required'  => 'Order Id should be required',
+    'order_id.exists'    => 'Order Id did not exist',
+];
+$rules = [
+    'order_id'   => 'required|exists:orders,order_id',
+];
+$validator = Validator::make($request->all(), $rules, $error_message);
+if($validator->fails()){
+    return $this->sendError(implode(", ",$validator->errors()->all()), 200);
+}
+
+try {
+    // get Order Detail
+  $order = Order::where(['user_id'  => auth()->user()->id,
+     'order_id' => $request->order_id])->get();
+  
+  if (!isset($order[0]->id)) {
+      return $this->sendError('Sorry! Order Id not available.', 400);  
+  }
+  \DB::beginTransaction();
+  Order::where(['order_id' => $request->order_id,'user_id' => auth()->user()->id])->update([
+    'status'            => 'Canceled',        
+    'status_change_by'  =>  auth()->user()->id,
+]);  
+  \DB::commit();
+  return $this->sendResponse('Your order is Canceled.');
+}
+catch (\Throwable $e)
+{
+  \DB::rollback();
+  return $this->sendError($e->getMessage().' on line '.$e->getLine(), 400);  
+}
+}
+
+
 public function technicianOrderHistory($status=null){
 
     try {
@@ -287,8 +325,20 @@ public function startWork(Request $request){
     // update order status 
         $update = Order::find($orderDetail[0]->id);
         $update->status             = 'In-Process';
-        $updata->status_change_by   =  auth()->user()->id,
+        $updata->status_change_by   =  auth()->user()->id;
         $update->save();
+
+         // Save Notification In Notification Table
+        $message = 'Your order is In-Process . order id '.$request->order_id;
+        Notification::create([
+            'user_id'           => auth()->user()->id,
+            'role_id'           => 2,
+            'order_id'          => $request->order_id,
+            'order_tbl_id'      => $orderDetail[0]->id,
+            'message'           => $message,
+            'deep_link'         => 'deep_link',
+        ]);
+
         \DB::commit();
         return $this->sendResponse('Work Image uplod successfully.');
     }
@@ -399,8 +449,18 @@ public function verifyOtpCompleteWork(Request $request){
     // update otp status 
         $update = Order::find($orderDetail[0]->id);
         $update->otp_status        = 1;
-        $update->status_change_by  =  auth()->user()->id
-        $update->save();        
+        $update->status_change_by  =  auth()->user()->id;
+        $update->save();       
+         // Save Notification In Notification Table
+        $message = 'Your order is Completed . order id '.$request->order_id;
+        Notification::create([
+            'user_id'           => auth()->user()->id,
+            'role_id'           => 2,
+            'order_id'          => $request->order_id,
+            'order_tbl_id'      => $orderDetail[0]->id,
+            'message'           => $message,
+            'deep_link'         => 'deep_link',
+        ]); 
         \DB::commit();
         return $this->sendResponse('Your work successfully done.');
     }

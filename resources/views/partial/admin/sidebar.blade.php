@@ -431,6 +431,34 @@
 
 
 
+<!-- Contact Us Management -->
+
+@canany(['banner_single_access'])
+<li class="sidebar-item">
+    <a class="sidebar-link has-arrow waves-effect waves-dark selected" href="javascript:void(0)" aria-expanded="false">
+        <i class="mr-3 mdi mdi-account" aria-hidden="true"></i>
+        <span class="hide-menu">Contact Us</span>
+    </a>
+    <ul aria-expanded="false" class="collapse first-level
+    @if(request()->is('admin/contact-us/*')) in @endif
+    @if(request()->is('admin/contact-us/index')) in @endif">
+    @can('banner_single_access')
+    <li class="sidebar-item">
+        <a class="sidebar-link waves-effect waves-dark  @if(request()->is('admin/contact-us/index')) is_active @endif" href="{{ route('contact-us.index') }}" aria-expanded="false">
+            <i class="mr-3 mdi mdi-account-multiple" aria-hidden="true"></i>
+            <span class="hide-menu">Contact us list</span>
+        </a>
+    </li>
+    @endcan   
+</ul>
+</li>
+@endcanany
+
+<!-- Contact Us management EOC -->
+
+
+
+
 </ul>
 
 </nav>

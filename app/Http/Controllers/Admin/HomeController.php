@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Order;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -24,9 +26,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $totalUsers = User::where('role_id',2)->count();
-        $technicians = User::where('role_id',3)->count();
-        $data = compact('totalUsers','technicians');
+        $totalUsers         = User::where('role_id',2)->count();
+        $technicians        = User::where('role_id',3)->count();
+        $totalAdminIncome   = Order::where('status','Completed')->sum('final_payment');
+        $todayIncome        = Order::where('status','Completed')->whereDate('created_at', Carbon::today())->sum('final_payment');
+        $totalTransaction   = Order::where('status','Completed')->count();
+        $todayTransaction   = Order::whereDate('created_at', Carbon::today())->count();
+        // dd($todayTransaction);
+        $data = compact('totalUsers','technicians','totalAdminIncome','totalTransaction','todayTransaction','todayIncome');
         return view('admin.home',$data);
     }
 }

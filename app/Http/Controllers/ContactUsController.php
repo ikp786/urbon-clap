@@ -11,6 +11,12 @@ use Validator;
 class ContactUsController extends BaseController
 {
 
+    public function index()
+    {
+        $contacts = ContactUs::OrderBy('id','DESC')->paginate(10);
+        return view('admin.contact-us.index',compact('contacts'));
+    }
+
     public function store(Request $request){
 
         $error_message =    [
